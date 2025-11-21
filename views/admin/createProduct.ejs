@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <%- include('../partials/admin/head') %>
+</head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <%- include('../partials/admin/navbar') %>
+
+                <div class="layout-page">
+                    <%- include('../partials/admin/header') %>
+
+                        <div class="content-wrapper">
+                            <div class="container-xxl flex-grow-1 container-p-y">
+                                <h4 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">Quản lý / Sản phẩm /</span> Thêm mới
+                                </h4>
+
+                                <!-- Flash Messages -->
+                                <% if (typeof success !=='undefined' && success.length> 0) { %>
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>Thành công!</strong>
+                                        <%= success %>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error !=='undefined' && error.length> 0) { %>
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <strong>Lỗi!</strong>
+                                                <%= error %>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="alert"></button>
+                                            </div>
+                                            <% } %>
+
+                                                <form action="/admin/products/create" method="POST"
+                                                    enctype="multipart/form-data" id="productForm">
+                                                    <div class="row">
+                                                        <!-- Cột trái - Form chính -->
+                                                        <div class="col-md-8">
+                                                            <!-- Thông tin cơ bản -->
+                                                            <div class="card mb-4">
+                                                                <div class="card-header">
+                                                                    <h5 class="mb-0"><i
+                                                                            class="bx bx-info-circle me-2"></i>Thông tin
+                                                                        cơ bản</h5>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="productName">
+                                                                            Tên sản phẩm <span
+                                                                                class="text-danger">*</span>
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="productName" name="name"
+                                                                            placeholder="VD: LILY, MATCHA STRAWBERRY CREAMY..."
+                                                                            required />
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="productDesc">
+                                                                            Mô tả <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <textarea class="form-control" id="productDesc"
+                                                                            name="description" rows="6"
+                                                                            placeholder="Nhập mô tả chi tiết về sản phẩm...&#10;&#10;VD: Dòng Bánh kem lạnh (Mousse), vị Phô mai nhân xoài chanh leo. Kích thước: Bánh có 1 size duy nhất 18cm cao 4cm dành cho 6-8 người dùng..."
+                                                                            required></textarea>
+                                                                        <div class="form-text">Mô tả chi tiết giúp khách
+                                                                            hàng hiểu rõ hơn về sản phẩm</div>
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 mb-3">
+                                                                            <label class="form-label"
+                                                                                for="productPrice">
+                                                                                Giá bán <span
+                                                                                    class="text-danger">*</span>
+                                                                            </label>
+                                                                            <div class="input-group">
+                                                                                <input type="number"
+                                                                                    class="form-control"
+                                                                                    id="productPrice" name="price"
+                                                                                    min="0" step="1000"
+                                                                                    placeholder="75000" required />
+                                                                                <span class="input-group-text">₫</span>
+                                                                            </div>
+                                                                            <div class="form-text">Nhập giá không có dấu
+                                                                                phẩy</div>
+                                                                        </div>
+
+                                                                        <div class="col-md-6 mb-3">
+                                                                            <label class="form-label"
+                                                                                for="productSize">Kích thước</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="productSize" name="size"
+                                                                                placeholder="VD: 18cm, Nhỏ (1-2 người)..." />
+                                                                            <div class="form-text">Size hoặc số người
+                                                                                dùng</div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="productCategory">
+                                                                            Danh mục <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <select class="form-select" id="productCategory"
+                                                                            name="category" required>
+                                                                            <option value="">-- Chọn danh mục --
+                                                                            </option>
+                                                                            <% categories.forEach(category=> { %>
+                                                                                <option value="<%= category._id %>">
+                                                                                    <%= category.name %>
+                                                                                </option>
+                                                                                <% }) %>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Upload ảnh -->
+                                                            <div class="card mb-4">
+                                                                <div class="card-header">
+                                                                    <h5 class="mb-0"><i
+                                                                            class="bx bx-image me-2"></i>Hình ảnh sản
+                                                                        phẩm</h5>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="productImages">
+                                                                            Tải lên nhiều ảnh <span
+                                                                                class="text-danger">*</span>
+                                                                        </label>
+                                                                        <input class="form-control" type="file"
+                                                                            id="productImages" name="images"
+                                                                            accept="image/*" multiple required />
+                                                                        <div class="form-text">
+                                                                            Chọn nhiều ảnh (tối đa 10 ảnh, mỗi ảnh tối
+                                                                            đa 5MB)
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- Preview ảnh -->
+                                                                    <div id="imagePreview" class="row g-2 mt-2"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Cột phải - Trạng thái & Hướng dẫn -->
+                                                        <div class="col-md-4">
+                                                            <!-- Trạng thái -->
+                                                            <div class="card mb-3">
+                                                                <div class="card-header">
+                                                                    <h5 class="mb-0"><i class="bx bx-cog me-2"></i>Trạng
+                                                                        thái</h5>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="form-check form-switch mb-2">
+                                                                        <input class="form-check-input" type="checkbox"
+                                                                            name="isActive" id="isActive" checked />
+                                                                        <label class="form-check-label" for="isActive">
+                                                                            <strong>Hiển thị sản phẩm</strong>
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-text">
+                                                                        <i class="bx bx-info-circle"></i>
+                                                                        Bật để hiển thị sản phẩm trên website
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Hướng dẫn -->
+                                                            <div class="card bg-light">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title">
+                                                                        <i class="bx bx-help-circle text-primary"></i>
+                                                                        Hướng dẫn
+                                                                    </h5>
+                                                                    <hr>
+
+                                                                    <div class="mb-3">
+                                                                        <h6 class="text-primary">
+                                                                            <i class="bx bx-chevron-right"></i> Tên sản
+                                                                            phẩm
+                                                                        </h6>
+                                                                        <p class="small text-muted mb-0">
+                                                                            Đặt tên ngắn gọn, hấp dẫn. VD: "LILY", "Kem
+                                                                            Matcha Mía"
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <h6 class="text-primary">
+                                                                            <i class="bx bx-chevron-right"></i> Mô tả
+                                                                        </h6>
+                                                                        <p class="small text-muted mb-0">
+                                                                            Mô tả chi tiết: dòng bánh, vị, kích thước,
+                                                                            số người dùng, nguyên liệu...
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <h6 class="text-primary">
+                                                                            <i class="bx bx-chevron-right"></i> Giá
+                                                                        </h6>
+                                                                        <p class="small text-muted mb-0">
+                                                                            Nhập giá bằng số, không dấu phẩy. VD: 75000,
+                                                                            720000
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <div class="mb-0">
+                                                                        <h6 class="text-primary">
+                                                                            <i class="bx bx-chevron-right"></i> Hình ảnh
+                                                                        </h6>
+                                                                        <p class="small text-muted mb-0">
+                                                                            Chọn ảnh rõ nét, đẹp mắt. Ảnh đầu tiên sẽ là
+                                                                            ảnh chính.
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Buttons -->
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <button type="submit" class="btn btn-primary">
+                                                                        <i class="bx bx-save me-1"></i> Lưu sản phẩm
+                                                                    </button>
+                                                                    <a href="/admin/products"
+                                                                        class="btn btn-outline-secondary">
+                                                                        <i class="bx bx-x me-1"></i> Hủy
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                            </div>
+                        </div>
+                </div>
+        </div>
+    </div>
+
+    <%- include('../partials/admin/scripts') %>
+
+        <script>
+            // Preview ảnh khi chọn file
+            document.getElementById('productImages').addEventListener('change', function (e) {
+                const preview = document.getElementById('imagePreview');
+                preview.innerHTML = '';
+
+                const files = Array.from(e.target.files);
+
+                if (files.length > 10) {
+                    alert('Chỉ được chọn tối đa 10 ảnh!');
+                    this.value = '';
+                    return;
+                }
+
+                files.forEach((file, index) => {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File ' + file.name + ' quá lớn (>5MB)!');
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-md-3';
+                        col.innerHTML = `
+                        <div class="card">
+                            <img src="${e.target.result}" class="card-img-top" style="height: 150px; object-fit: cover;" />
+                            <div class="card-body p-2 text-center">
+                                <small class="text-muted">${index === 0 ? '📌 Ảnh chính' : 'Ảnh ' + (index + 1)}</small>
+                            </div>
+                        </div>
+                    `;
+                        preview.appendChild(col);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            // Validate form
+            document.getElementById('productForm').addEventListener('submit', function (e) {
+                const name = document.getElementById('productName').value.trim();
+                const price = document.getElementById('productPrice').value;
+                const category = document.getElementById('productCategory').value;
+                const description = document.getElementById('productDesc').value.trim();
+                const images = document.getElementById('productImages').files;
+
+                if (!name || !price || !category || !description) {
+                    e.preventDefault();
+                    alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+                    return false;
+                }
+
+                if (images.length === 0) {
+                    e.preventDefault();
+                    alert('Vui lòng chọn ít nhất 1 ảnh!');
+                    return false;
+                }
+
+                if (parseFloat(price) < 0) {
+                    e.preventDefault();
+                    alert('Giá phải là số dương!');
+                    return false;
+                }
+
+                return true;
+            });
+        </script>
+</body>
+
+</html>

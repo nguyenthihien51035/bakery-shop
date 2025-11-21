@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <%- include('../partials/admin/head') %>
+</head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <%- include('../partials/admin/navbar') %>
+
+                <div class="layout-page">
+                    <%- include('../partials/admin/header') %>
+
+                        <div class="content-wrapper">
+                            <div class="container-xxl flex-grow-1 container-p-y">
+                                <h4 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">Quản lý/</span> Người dùng
+                                </h4>
+
+                                <!-- Flash Messages -->
+                                <% if (typeof success !=='undefined' && success.length> 0) { %>
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>✅ Thành công!</strong>
+                                        <%= success %>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error !=='undefined' && error.length> 0) { %>
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <strong>❌ Lỗi!</strong>
+                                                <%= error %>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="alert"></button>
+                                            </div>
+                                            <% } %>
+
+                                                <!-- Bảng người dùng -->
+                                                <div class="card">
+                                                    <h5 class="card-header">Danh sách người dùng</h5>
+                                                    <div class="table-responsive text-nowrap">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>STT</th>
+                                                                    <th>Tên đăng nhập</th>
+                                                                    <th>Email</th>
+                                                                    <th>Quyền</th>
+                                                                    <th>Ngày tạo</th>
+                                                                    <th>Trạng thái</th>
+                                                                    <th>Thao tác</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="table-border-bottom-0">
+                                                                <% if (users && users.length> 0) { %>
+                                                                    <% users.forEach((user, index)=> { %>
+                                                                        <tr>
+                                                                            <td><strong>
+                                                                                    <%= index + 1 %>
+                                                                                </strong></td>
+
+                                                                            <td>
+                                                                                <div class="d-flex align-items-center">
+                                                                                    <div class="avatar avatar-sm me-2">
+                                                                                        <span
+                                                                                            class="avatar-initial rounded-circle bg-label-primary">
+                                                                                            <%= user.username.charAt(0).toUpperCase()
+                                                                                                %>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <strong>
+                                                                                            <%= user.username %>
+                                                                                        </strong>
+                                                                                        <% if
+                                                                                            (user._id.toString()===session.userId)
+                                                                                            { %>
+                                                                                            <span
+                                                                                                class="badge bg-label-warning ms-1">Bạn</span>
+                                                                                            <% } %>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <%= user.email %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <select
+                                                                                    class="form-select form-select-sm"
+                                                                                    style="width: 150px;"
+                                                                                    onchange="updateUserRole('<%= user._id %>', this.value)"
+                                                                                    <%=user._id.toString()===session.userId
+                                                                                    ? 'disabled' : '' %>>
+                                                                                    <option value="user"
+                                                                                        <%=user.role==='user'
+                                                                                        ? 'selected' : '' %>>
+                                                                                        Người dùng
+                                                                                    </option>
+                                                                                    <option value="admin"
+                                                                                        <%=user.role==='admin'
+                                                                                        ? 'selected' : '' %>>
+                                                                                        Quản trị viên
+                                                                                    </option>
+                                                                                </select>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <%= new
+                                                                                    Date(user.createdAt).toLocaleDateString('vi-VN')
+                                                                                    %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <% if (user.isActive) { %>
+                                                                                    <span
+                                                                                        class="badge bg-label-success">Hoạt
+                                                                                        động</span>
+                                                                                    <% } else { %>
+                                                                                        <span
+                                                                                            class="badge bg-label-secondary">Đã
+                                                                                            khóa</span>
+                                                                                        <% } %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <div class="dropdown">
+                                                                                    <button type="button"
+                                                                                        class="btn p-0 dropdown-toggle hide-arrow"
+                                                                                        data-bs-toggle="dropdown"
+                                                                                        <%=user._id.toString()===session.userId
+                                                                                        ? 'disabled' : '' %>>
+                                                                                        <i
+                                                                                            class="bx bx-dots-vertical-rounded"></i>
+                                                                                    </button>
+                                                                                    <div class="dropdown-menu">
+                                                                                        <a class="dropdown-item"
+                                                                                            href="javascript:void(0);"
+                                                                                            onclick="toggleUserStatus('<%= user._id %>', '<%= user.isActive %>')">)
+                                                                                            <% if (user.isActive) { %>
+                                                                                                <i
+                                                                                                    class="bx bx-lock me-1"></i>
+                                                                                                Khóa tài khoản
+                                                                                                <% } else { %>
+                                                                                                    <i
+                                                                                                        class="bx bx-lock-open me-1"></i>
+                                                                                                    Kích hoạt
+                                                                                                    <% } %>
+                                                                                        </a>
+                                                                                        <a class="dropdown-item text-danger"
+                                                                                            href="javascript:void(0);"
+                                                                                            onclick="deleteUser('<%= user._id %>', '<%= user.username %>')">
+                                                                                            <i
+                                                                                                class="bx bx-trash me-1"></i>
+                                                                                            Xóa
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <% }) %>
+                                                                            <% } else { %>
+                                                                                <tr>
+                                                                                    <td colspan="7"
+                                                                                        class="text-center py-5">
+                                                                                        <i class="bx bx-user-x"
+                                                                                            style="font-size: 48px; opacity: 0.3;"></i>
+                                                                                        <div class="mt-2 text-muted">
+                                                                                            Chưa có người dùng nào</div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <% } %>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                            </div>
+                        </div>
+                </div>
+        </div>
+    </div>
+
+    <%- include('../partials/admin/scripts') %>
+
+        <script>
+            // Cập nhật quyền người dùng
+            function updateUserRole(userId, newRole) {
+                if (!confirm(`Bạn có chắc muốn đổi quyền thành "${newRole === 'admin' ? 'Quản trị viên' : 'Người dùng'}"?`)) {
+                    location.reload();
+                    return;
+                }
+
+                fetch('/admin/users/update-role', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId, role: newRole })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                            location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        alert('Có lỗi xảy ra!');
+                        console.error(error);
+                        location.reload();
+                    });
+            }
+
+            // Toggle trạng thái active/inactive
+            function toggleUserStatus(userId, currentStatus) {
+                const action = currentStatus ? 'khóa' : 'kích hoạt';
+
+                if (!confirm(`Bạn có chắc muốn ${action} tài khoản này?`)) {
+                    return;
+                }
+
+                fetch(`/admin/users/toggle-status/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Có lỗi xảy ra!');
+                        console.error(error);
+                    });
+            }
+
+            // Xóa người dùng
+            function deleteUser(userId, username) {
+                if (!confirm(`Bạn có chắc chắn muốn xóa người dùng "${username}"?\n\nThao tác này không thể hoàn tác!`)) {
+                    return;
+                }
+
+                fetch(`/admin/users/delete/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Có lỗi xảy ra!');
+                        console.error(error);
+                    });
+            }
+        </script>
+</body>
+
+</html>

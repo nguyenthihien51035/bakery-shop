@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <%- include('../partials/admin/head') %>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <!-- Menu -->
+
+            <%- include('../partials/admin/navbar') %> <!-- / Menu -->
+
+                <!-- Layout container -->
+                <div class="layout-page">
+                    <!-- Navbar -->
+                    <%- include('../partials/admin/header') %>
+                        <!-- / Navbar -->
+
+                        <!-- Content wrapper -->
+                        <div class="content-wrapper">
+                            <!-- Content -->
+
+                            <div class="container-xxl flex-grow-1 container-p-y">
+                                <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Quản lý/</span> Danh mục
+                                    sản phẩm
+                                </h4>
+
+                                <!-- Button thêm danh mục - Chuyển sang trang thêm mới -->
+                                <div class="mb-3">
+                                    <a href="/admin/categories/create" class="btn btn-primary">
+                                        <i class="bx bx-plus me-1"></i> Thêm danh mục mới
+                                    </a>
+                                </div>
+
+                                <!-- Bảng danh mục -->
+                                <div class="card">
+                                    <h5 class="card-header">Danh sách danh mục</h5>
+                                    <div class="table-responsive text-nowrap">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tên danh mục</th>
+                                                    <th>Số lượng sản phẩm</th>
+                                                    <th>Ngày tạo</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-border-bottom-0">
+                                                <% if (categories && categories.length> 0) { %>
+                                                    <% categories.forEach((category, index)=> { %>
+                                                        <tr>
+                                                            <td><strong>
+                                                                    <%= index + 1 %>
+                                                                </strong></td>
+                                                            <td>
+                                                                <i class="bx bx-category me-2"></i>
+                                                                <strong>
+                                                                    <%= category.name %>
+                                                                </strong>
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge bg-label-info">
+                                                                    <%= category.productCount || 0 %> sản phẩm
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <%= new
+                                                                    Date(category.createdAt).toLocaleDateString('vi-VN')
+                                                                    %>
+                                                            </td>
+                                                            <td>
+                                                                <% if (category.isActive) { %>
+                                                                    <span class="badge bg-label-success">Hoạt
+                                                                        động</span>
+                                                                    <% } else { %>
+                                                                        <span class="badge bg-label-secondary">Tạm
+                                                                            ẩn</span>
+                                                                        <% } %>
+                                                            </td>
+                                                            <td>
+                                                                <div class="dropdown">
+                                                                    <button type="button"
+                                                                        class="btn p-0 dropdown-toggle hide-arrow"
+                                                                        data-bs-toggle="dropdown">
+                                                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                                                    </button>
+                                                                    <div class="dropdown-menu">
+                                                                        <a class="dropdown-item"
+                                                                            href="/admin/categories/edit/<%= category._id %>">
+                                                                            <i class="bx bx-edit-alt me-1"></i> Sửa
+                                                                        </a>
+                                                                        <a class="dropdown-item"
+                                                                            href="javascript:void(0);"
+                                                                            onclick="deleteCategory('<%= category._id %>')">
+                                                                            <i class="bx bx-trash me-1"></i> Xóa
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                            <% } else { %>
+                                                                <tr>
+                                                                    <td colspan="6" class="text-center">Chưa có danh mục
+                                                                        nào</td>
+                                                                </tr>
+                                                                <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+        </div>
+    </div>
+    <%- include('../partials/admin/scripts') %>
+
+        <script>
+            function deleteCategory(categoryId) {
+                if (confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
+                    fetch(`/admin/categories/delete/${categoryId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Xóa danh mục thành công!');
+                                location.reload();
+                            } else {
+                                alert('Có lỗi xảy ra: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            alert('Có lỗi xảy ra khi xóa danh mục!');
+                            console.error(error);
+                        });
+                }
+            }
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <%- include('../partials/admin/head') %>
+</head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <%- include('../partials/admin/navbar') %>
+
+                <div class="layout-page">
+                    <%- include('../partials/admin/header') %>
+
+                        <div class="content-wrapper">
+                            <div class="container-xxl flex-grow-1 container-p-y">
+                                <h4 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">Quản lý/</span> Sản phẩm
+                                </h4>
+
+                                <!-- Flash Messages -->
+                                <% if (typeof success !=='undefined' && success.length> 0) { %>
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>Thành công!</strong>
+                                        <%= success %>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error !=='undefined' && error.length> 0) { %>
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <strong>Lỗi!</strong>
+                                                <%= error %>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="alert"></button>
+                                            </div>
+                                            <% } %>
+
+                                                <!-- Button thêm sản phẩm -->
+                                                <div class="mb-3">
+                                                    <a href="/admin/products/create" class="btn btn-primary">
+                                                        <i class="bx bx-plus me-1"></i> Thêm sản phẩm mới
+                                                    </a>
+                                                </div>
+
+                                                <!-- Bảng sản phẩm -->
+                                                <div class="card">
+                                                    <h5 class="card-header">Danh sách sản phẩm</h5>
+                                                    <div class="table-responsive text-nowrap">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>STT</th>
+                                                                    <th>Hình ảnh</th>
+                                                                    <th>Tên sản phẩm</th>
+                                                                    <th>Danh mục</th>
+                                                                    <th>Giá</th>
+                                                                    <th>Size</th>
+                                                                    <th>Ngày tạo</th>
+                                                                    <th>Trạng thái</th>
+                                                                    <th>Thao tác</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="table-border-bottom-0">
+                                                                <% if (products && products.length> 0) { %>
+                                                                    <% products.forEach((product, index)=> { %>
+                                                                        <tr>
+                                                                            <td><strong>
+                                                                                    <%= index + 1 %>
+                                                                                </strong></td>
+
+                                                                            <td>
+                                                                                <% if (product.images &&
+                                                                                    product.images.length> 0) { %>
+                                                                                    <img src="/uploads/products/<%= product.images[0] %>"
+                                                                                        alt="<%= product.name %>"
+                                                                                        class="rounded"
+                                                                                        style="width: 60px; height: 60px; object-fit: cover;" />
+                                                                                    <% } else { %>
+                                                                                        <div class="bg-label-secondary rounded d-flex align-items-center justify-content-center"
+                                                                                            style="width: 60px; height: 60px;">
+                                                                                            <i class="bx bx-image"
+                                                                                                style="font-size: 24px;"></i>
+                                                                                        </div>
+                                                                                        <% } %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <div>
+                                                                                    <strong>
+                                                                                        <%= product.name %>
+                                                                                    </strong>
+                                                                                </div>
+                                                                                <% if (product.description &&
+                                                                                    product.description.length> 50) { %>
+                                                                                    <small class="text-muted">
+                                                                                        <%= product.description.substring(0,
+                                                                                            50) %>...
+                                                                                    </small>
+                                                                                    <% } %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <% if (product.category) { %>
+                                                                                    <span class="badge bg-label-info">
+                                                                                        <%= product.category.name %>
+                                                                                    </span>
+                                                                                    <% } else { %>
+                                                                                        <span
+                                                                                            class="badge bg-label-secondary">N/A</span>
+                                                                                        <% } %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <strong class="text-primary">
+                                                                                    <%= product.price.toLocaleString('vi-VN')
+                                                                                        %>₫
+                                                                                </strong>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <% if (product.size) { %>
+                                                                                    <small class="text-muted">
+                                                                                        <%= product.size %>
+                                                                                    </small>
+                                                                                    <% } else { %>
+                                                                                        <small
+                                                                                            class="text-muted">-</small>
+                                                                                        <% } %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <%= new
+                                                                                    Date(product.createdAt).toLocaleDateString('vi-VN')
+                                                                                    %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <% if (product.isActive) { %>
+                                                                                    <span
+                                                                                        class="badge bg-label-success">Hiển
+                                                                                        thị</span>
+                                                                                    <% } else { %>
+                                                                                        <span
+                                                                                            class="badge bg-label-secondary">Ẩn</span>
+                                                                                        <% } %>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <div class="dropdown">
+                                                                                    <button type="button"
+                                                                                        class="btn p-0 dropdown-toggle hide-arrow"
+                                                                                        data-bs-toggle="dropdown">
+                                                                                        <i
+                                                                                            class="bx bx-dots-vertical-rounded"></i>
+                                                                                    </button>
+                                                                                    <div class="dropdown-menu">
+                                                                                        <a class="dropdown-item"
+                                                                                            href="javascript:void(0);"
+                                                                                            onclick="showProductDetail('<%= product._id %>')">
+                                                                                            <i
+                                                                                                class="bx bx-show me-1"></i>
+                                                                                            Xem chi tiết
+                                                                                        </a>
+                                                                                        <a class="dropdown-item"
+                                                                                            href="/admin/products/edit/<%= product._id %>">
+                                                                                            <i
+                                                                                                class="bx bx-edit-alt me-1"></i>
+                                                                                            Sửa
+                                                                                        </a>
+                                                                                        <a class="dropdown-item"
+                                                                                            href="javascript:void(0);"
+                                                                                            onclick="deleteProduct('<%= product._id %>', '<%= product.name %>')">
+                                                                                            <i
+                                                                                                class="bx bx-trash me-1"></i>
+                                                                                            Xóa
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <% }) %>
+                                                                            <% } else { %>
+                                                                                <tr>
+                                                                                    <td colspan="9"
+                                                                                        class="text-center py-5">
+                                                                                        <i class="bx bx-box"
+                                                                                            style="font-size: 48px; opacity: 0.3;"></i>
+                                                                                        <div class="mt-2 text-muted">
+                                                                                            Chưa có sản phẩm nào</div>
+                                                                                        <a href="/admin/products/create"
+                                                                                            class="btn btn-sm btn-primary mt-2">
+                                                                                            <i
+                                                                                                class="bx bx-plus me-1"></i>
+                                                                                            Thêm sản phẩm đầu tiên
+                                                                                        </a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <% } %>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                            </div>
+                        </div>
+                </div>
+        </div>
+    </div>
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productDetailModalLabel">Chi tiết sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner" id="productImagesCarousel">
+                                    <!-- Images will be loaded here by JS -->
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel"
+                                    data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel"
+                                    data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h4 id="detailProductName"></h4>
+                            <p class="text-muted" id="detailProductCategory"></p>
+                            <p><strong class="text-primary fs-4" id="detailProductPrice"></strong></p>
+                            <p><strong>Mô tả:</strong> <span id="detailProductDescription"></span></p>
+                            <p><strong>Size:</strong> <span id="detailProductSize"></span></p>
+                            <p><strong>Trạng thái:</strong> <span id="detailProductStatus"></span></p>
+                            <p><strong>Ngày tạo:</strong> <span id="detailProductCreatedAt"></span></p>
+                            <hr>
+                            <div class="d-flex gap-2">
+                                <a id="editProductLink" href="#" class="btn btn-warning btn-sm">
+                                    <i class="bx bx-edit-alt me-1"></i> Sửa
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm" id="deleteProductButton">
+                                    <i class="bx bx-trash me-1"></i> Xóa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/admin/scripts') %>
+
+        <script>
+            function deleteProduct(productId, productName) {
+                if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${productName}"?\n\nThao tác này sẽ xóa cả hình ảnh và không thể hoàn tác!`)) {
+                    fetch(`/admin/products/delete/${productId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Xóa sản phẩm thành công!');
+                                location.reload();
+                            } else {
+                                alert('Có lỗi xảy ra: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            alert('Có lỗi xảy ra khi xóa sản phẩm!');
+                            console.error(error);
+                        });
+                }
+            }
+            async function showProductDetail(productId) {
+                try {
+                    const response = await fetch(`/admin/api/products/${productId}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const product = data.product;
+
+                        // Điền thông tin vào modal
+                        $('#detailProductName').text(product.name);
+                        $('#detailProductCategory').text(product.category ? product.category.name : 'N/A');
+                        $('#detailProductPrice').text(product.price.toLocaleString('vi-VN') + '₫');
+                        $('#detailProductDescription').text(product.description || 'Không có mô tả.');
+                        $('#detailProductSize').text(product.size || 'N/A');
+                        $('#detailProductStatus').html(product.isActive ? '<span class="badge bg-label-success">Hiển thị</span>' : '<span class="badge bg-label-secondary">Ẩn</span>');
+                        $('#detailProductCreatedAt').text(new Date(product.createdAt).toLocaleDateString('vi-VN'));
+
+                        // Xử lý hình ảnh carousel
+                        let imagesHtml = '';
+                        if (product.images && product.images.length > 0) {
+                            product.images.forEach((image, index) => {
+                                imagesHtml += `
+                            <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                <img src="/uploads/products/${image}" class="d-block w-100" alt="${product.name}" style="height: 300px; object-fit: contain;">
+                            </div>
+                        `;
+                            });
+                        } else {
+                            imagesHtml = `
+                        <div class="carousel-item active">
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
+                                <i class="bx bx-image" style="font-size: 60px; opacity: 0.3;"></i>
+                                <span class="ms-2 text-muted">Không có hình ảnh</span>
+                            </div>
+                        </div>
+                    `;
+                        }
+                        $('#productImagesCarousel').html(imagesHtml);
+
+                        // Cập nhật link Sửa và nút Xóa trong modal
+                        $('#editProductLink').attr('href', `/admin/products/edit/${product._id}`);
+                        $('#deleteProductButton').off('click').on('click', function () {
+                            deleteProduct(product._id, product.name);
+                            $('#productDetailModal').modal('hide'); // Đóng modal sau khi xóa
+                        });
+
+                        // Hiển thị modal
+                        const productDetailModal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+                        productDetailModal.show();
+
+                    } else {
+                        alert('Không tìm thấy thông tin sản phẩm!');
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi lấy chi tiết sản phẩm:', error);
+                    alert('Có lỗi xảy ra khi lấy chi tiết sản phẩm.');
+                }
+            }
+        </script>
+</body>
+
+</html>

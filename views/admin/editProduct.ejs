@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <%- include('../partials/admin/head') %>
+</head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <%- include('../partials/admin/navbar') %>
+
+                <div class="layout-page">
+                    <%- include('../partials/admin/header') %>
+
+                        <div class="content-wrapper">
+                            <div class="container-xxl flex-grow-1 container-p-y">
+                                <h4 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">Quản lý / Sản phẩm /</span> Sửa sản phẩm
+                                </h4>
+
+                                <!-- Flash Messages -->
+                                <% if (typeof success !=='undefined' && success.length> 0) { %>
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>Thành công!</strong>
+                                        <%= success %>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error !=='undefined' && error.length> 0) { %>
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <strong>Lỗi!</strong>
+                                                <%= error %>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="alert"></button>
+                                            </div>
+                                            <% } %>
+
+                                                <form action="/admin/products/edit/<%= product._id %>" method="POST"
+                                                    enctype="multipart/form-data" id="editProductForm">
+                                                    <div class="row">
+                                                        <!-- Cột trái - Form chính -->
+                                                        <div class="col-md-8">
+                                                            <!-- Thông tin cơ bản -->
+                                                            <div class="card mb-4">
+                                                                <div
+                                                                    class="card-header d-flex justify-content-between align-items-center">
+                                                                    <h5 class="mb-0"><i
+                                                                            class="bx bx-edit me-2"></i>Chỉnh sửa thông
+                                                                        tin</h5>
+                                                                    <small class="text-muted">ID: <%= product._id %>
+                                                                    </small>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="productName">
+                                                                            Tên sản phẩm <span
+                                                                                class="text-danger">*</span>
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="productName" name="name"
+                                                                            value="<%= product.name %>" required />
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="productDesc">
+                                                                            Mô tả <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <textarea class="form-control" id="productDesc"
+                                                                            name="description" rows="6"
+                                                                            required><%= product.description || '' %></textarea>
+                                                                        <div class="form-text">Mô tả chi tiết giúp khách
+                                                                            hàng hiểu rõ hơn về sản phẩm</div>
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 mb-3">
+                                                                            <label class="form-label"
+                                                                                for="productPrice">
+                                                                                Giá bán <span
+                                                                                    class="text-danger">*</span>
+                                                                            </label>
+                                                                            <div class="input-group">
+                                                                                <input type="number"
+                                                                                    class="form-control"
+                                                                                    id="productPrice" name="price"
+                                                                                    min="0" step="1000"
+                                                                                    value="<%= product.price %>"
+                                                                                    required />
+                                                                                <span class="input-group-text">₫</span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="col-md-6 mb-3">
+                                                                            <label class="form-label"
+                                                                                for="productSize">Kích thước</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="productSize" name="size"
+                                                                                value="<%= product.size || '' %>"
+                                                                                placeholder="VD: 18cm, Nhỏ (1-2 người)..." />
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="productCategory">
+                                                                            Danh mục <span class="text-danger">*</span>
+                                                                        </label>
+                                                                        <select class="form-select" id="productCategory"
+                                                                            name="category" required>
+                                                                            <option value="">-- Chọn danh mục --
+                                                                            </option>
+                                                                            <% categories.forEach(category=> { %>
+                                                                                <option value="<%= category._id %>"
+                                                                                    <%=product.category &&
+                                                                                    product.category._id.toString()===category._id.toString()
+                                                                                    ? 'selected' : '' %>>
+                                                                                    <%= category.name %>
+                                                                                </option>
+                                                                                <% }) %>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Hình ảnh hiện tại -->
+                                                            <div class="card mb-4">
+                                                                <div class="card-header">
+                                                                    <h5 class="mb-0"><i
+                                                                            class="bx bx-image me-2"></i>Hình ảnh hiện
+                                                                        tại</h5>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <% if (product.images && product.images.length> 0) {
+                                                                        %>
+                                                                        <div class="row g-2">
+                                                                            <% product.images.forEach((image, index)=> {
+                                                                                %>
+                                                                                <div class="col-md-3">
+                                                                                    <div class="card position-relative">
+                                                                                        <img src="/uploads/products/<%= image %>"
+                                                                                            class="card-img-top"
+                                                                                            style="height: 150px; object-fit: cover;"
+                                                                                            alt="<%= product.name %>" />
+                                                                                        <div class="card-body p-2">
+                                                                                            <div class="form-check">
+                                                                                                <input
+                                                                                                    class="form-check-input"
+                                                                                                    type="checkbox"
+                                                                                                    name="deleteImages"
+                                                                                                    value="<%= image %>"
+                                                                                                    id="deleteImg<%= index %>">
+                                                                                                <label
+                                                                                                    class="form-check-label small"
+                                                                                                    for="deleteImg<%= index %>">
+                                                                                                    <%= index===0
+                                                                                                        ? '📌 Ảnh chính'
+                                                                                                        : 'Ảnh ' +
+                                                                                                        (index + 1) %>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <span
+                                                                                            class="badge bg-danger position-absolute top-0 end-0 m-2">
+                                                                                            <i class="bx bx-trash"></i>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <% }) %>
+                                                                        </div>
+                                                                        <div class="alert alert-info mt-3 mb-0"
+                                                                            role="alert">
+                                                                            <i class="bx bx-info-circle me-1"></i>
+                                                                            Tích chọn ảnh muốn xóa, sau đó nhấn "Cập
+                                                                            nhật sản phẩm"
+                                                                        </div>
+                                                                        <% } else { %>
+                                                                            <div class="alert alert-warning mb-0">
+                                                                                <i class="bx bx-error me-1"></i> Chưa có
+                                                                                ảnh nào
+                                                                            </div>
+                                                                            <% } %>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Thêm ảnh mới -->
+                                                            <div class="card mb-4">
+                                                                <div class="card-header">
+                                                                    <h5 class="mb-0"><i
+                                                                            class="bx bx-image-add me-2"></i>Thêm ảnh
+                                                                        mới</h5>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="productImages">
+                                                                            Tải lên ảnh mới (nếu cần)
+                                                                        </label>
+                                                                        <input class="form-control" type="file"
+                                                                            id="productImages" name="images"
+                                                                            accept="image/*" multiple />
+                                                                        <div class="form-text">
+                                                                            Chọn nhiều ảnh (tối đa 10 ảnh, mỗi ảnh tối
+                                                                            đa 5MB)
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- Preview ảnh mới -->
+                                                                    <div id="imagePreview" class="row g-2"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Cột phải - Thông tin & Trạng thái -->
+                                                        <div class="col-md-4">
+                                                            <!-- Trạng thái -->
+                                                            <div class="card mb-3">
+                                                                <div class="card-header">
+                                                                    <h5 class="mb-0"><i class="bx bx-cog me-2"></i>Trạng
+                                                                        thái</h5>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="form-check form-switch mb-2">
+                                                                        <input class="form-check-input" type="checkbox"
+                                                                            name="isActive" id="isActive"
+                                                                            <%=product.isActive ? 'checked' : '' %> />
+                                                                        <label class="form-check-label" for="isActive">
+                                                                            <strong>Hiển thị sản phẩm</strong>
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-text">
+                                                                        <i class="bx bx-info-circle"></i>
+                                                                        Bật để hiển thị sản phẩm trên website
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Thông tin -->
+                                                            <div class="card mb-3">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title">
+                                                                        <i
+                                                                            class="bx bx-info-circle text-primary me-1"></i>
+                                                                        Thông tin
+                                                                    </h5>
+                                                                    <hr>
+
+                                                                    <div class="mb-2">
+                                                                        <small class="text-muted d-block">Ngày
+                                                                            tạo:</small>
+                                                                        <strong>
+                                                                            <%= new
+                                                                                Date(product.createdAt).toLocaleString('vi-VN')
+                                                                                %>
+                                                                        </strong>
+                                                                    </div>
+
+                                                                    <div class="mb-2">
+                                                                        <small class="text-muted d-block">Cập nhật lần
+                                                                            cuối:</small>
+                                                                        <strong>
+                                                                            <%= new
+                                                                                Date(product.updatedAt).toLocaleString('vi-VN')
+                                                                                %>
+                                                                        </strong>
+                                                                    </div>
+
+                                                                    <div class="mb-2">
+                                                                        <small class="text-muted d-block">Số ảnh hiện
+                                                                            tại:</small>
+                                                                        <span class="badge bg-label-info">
+                                                                            <%= product.images ? product.images.length :
+                                                                                0 %> ảnh
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <div class="mb-0">
+                                                                        <small class="text-muted d-block">Danh
+                                                                            mục:</small>
+                                                                        <span class="badge bg-label-primary">
+                                                                            <%= product.category ? product.category.name
+                                                                                : 'N/A' %>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Hướng dẫn -->
+                                                            <div class="card bg-light">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title">
+                                                                        <i class="bx bx-help-circle text-primary"></i>
+                                                                        Hướng dẫn
+                                                                    </h5>
+                                                                    <hr>
+
+                                                                    <div class="mb-3">
+                                                                        <h6 class="text-primary">
+                                                                            <i class="bx bx-chevron-right"></i> Xóa ảnh
+                                                                        </h6>
+                                                                        <p class="small text-muted mb-0">
+                                                                            Tích chọn ảnh cần xóa, sau đó nhấn "Cập nhật
+                                                                            sản phẩm"
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <h6 class="text-primary">
+                                                                            <i class="bx bx-chevron-right"></i> Thêm ảnh
+                                                                        </h6>
+                                                                        <p class="small text-muted mb-0">
+                                                                            Ảnh mới sẽ được thêm vào cuối danh sách ảnh
+                                                                            hiện tại
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <div class="mb-0">
+                                                                        <h6 class="text-primary">
+                                                                            <i class="bx bx-chevron-right"></i> Xóa sản
+                                                                            phẩm
+                                                                        </h6>
+                                                                        <p class="small text-muted mb-0">
+                                                                            Sử dụng nút "Xóa sản phẩm" bên dưới. Thao
+                                                                            tác không thể hoàn tác.
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Buttons -->
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="card">
+                                                                <div
+                                                                    class="card-body d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <button type="submit" class="btn btn-primary">
+                                                                            <i class="bx bx-save me-1"></i> Cập nhật sản
+                                                                            phẩm
+                                                                        </button>
+                                                                        <a href="/admin/products"
+                                                                            class="btn btn-outline-secondary">
+                                                                            <i class="bx bx-x me-1"></i> Hủy
+                                                                        </a>
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-outline-danger"
+                                                                        onclick="confirmDelete()">
+                                                                        <i class="bx bx-trash me-1"></i> Xóa sản phẩm
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                            </div>
+                        </div>
+                </div>
+        </div>
+    </div>
+
+    <%- include('../partials/admin/scripts') %>
+
+        <script>
+            // Preview ảnh mới khi chọn file
+            document.getElementById('productImages').addEventListener('change', function (e) {
+                const preview = document.getElementById('imagePreview');
+                preview.innerHTML = '';
+
+                const files = Array.from(e.target.files);
+
+                if (files.length > 10) {
+                    alert('Chỉ được chọn tối đa 10 ảnh!');
+                    this.value = '';
+                    return;
+                }
+
+                files.forEach((file, index) => {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File ' + file.name + ' quá lớn (>5MB)!');
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-md-3';
+                        col.innerHTML = `
+                        <div class="card">
+                            <img src="${e.target.result}" class="card-img-top" style="height: 150px; object-fit: cover;" />
+                            <div class="card-body p-2 text-center">
+                                <small class="text-success">✨ Ảnh mới ${index + 1}</small>
+                            </div>
+                        </div>
+                    `;
+                        preview.appendChild(col);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            // Validate form
+            document.getElementById('editProductForm').addEventListener('submit', function (e) {
+                const name = document.getElementById('productName').value.trim();
+                const price = document.getElementById('productPrice').value;
+                const category = document.getElementById('productCategory').value;
+                const description = document.getElementById('productDesc').value.trim();
+
+                if (!name || !price || !category || !description) {
+                    e.preventDefault();
+                    alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+                    return false;
+                }
+
+                if (parseFloat(price) < 0) {
+                    e.preventDefault();
+                    alert('Giá phải là số dương!');
+                    return false;
+                }
+
+                return true;
+            });
+
+            // Xác nhận xóa sản phẩm
+            function confirmDelete() {
+                const productId = '<%= product._id %>';
+                const productName = '<%= product.name %>';
+
+                if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${productName}"?\n\nThao tác này sẽ xóa cả hình ảnh và không thể hoàn tác!`)) {
+                    fetch(`/admin/products/delete/${productId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Xóa sản phẩm thành công!');
+                                window.location.href = '/admin/products';
+                            } else {
+                                alert('Có lỗi xảy ra: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            alert('Có lỗi xảy ra khi xóa sản phẩm!');
+                            console.error(error);
+                        });
+                }
+            }
+        </script>
+</body>
+
+</html>

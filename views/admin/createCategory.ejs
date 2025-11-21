@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <%- include('../partials/admin/head') %>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <%- include('../partials/admin/navbar') %> <!-- / Menu -->
+
+                <!-- Layout container -->
+                <div class="layout-page">
+                    <!-- Navbar -->
+                    <%- include('../partials/admin/header') %>
+                        <!-- / Navbar -->
+
+                        <!-- Content wrapper -->
+                        <div class="content-wrapper">
+                            <!-- Content -->
+
+                            <div class="container-xxl flex-grow-1 container-p-y">
+                                <h4 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">Quản lý / Danh mục sản phẩm /</span> Thêm mới
+                                </h4>
+
+                                <!-- Form thêm danh mục -->
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="card mb-4">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <h5 class="mb-0">
+                                                    <i class="bx bx-category me-2"></i>Thông tin danh mục
+                                                </h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <form action="/admin/categories/create" method="POST" id="categoryForm">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="categoryName">
+                                                            Tên danh mục <span class="text-danger">*</span>
+                                                        </label>
+                                                        <input type="text" class="form-control" id="categoryName"
+                                                            name="name"
+                                                            placeholder="Ví dụ: Bánh kem, Bánh quy, Bánh mì..."
+                                                            required />
+                                                        <div class="form-text">Tên danh mục sẽ hiển thị trên website
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="categoryDesc">Mô tả</label>
+                                                        <textarea class="form-control" id="categoryDesc"
+                                                            name="description" rows="5"
+                                                            placeholder="Nhập mô tả chi tiết về danh mục sản phẩm này..."></textarea>
+                                                        <div class="form-text">Mô tả ngắn gọn giúp khách hàng hiểu rõ
+                                                            hơn về danh mục</div>
+                                                    </div>
+
+                                                    <div class="mb-4">
+                                                        <label class="form-label d-block">Trạng thái</label>
+                                                        <div class="form-check form-switch form-check-inline">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="isActive" id="isActive" checked />
+                                                            <label class="form-check-label" for="isActive">
+                                                                <strong>Hiển thị danh mục trên website</strong>
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-text">
+                                                            <i class="bx bx-info-circle"></i>
+                                                            Bật để khách hàng có thể xem danh mục này, tắt để tạm ẩn
+                                                        </div>
+                                                    </div>
+
+                                                    <hr class="my-4">
+
+                                                    <div class="d-flex gap-2">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="bx bx-save me-1"></i> Lưu danh mục
+                                                        </button>
+                                                        <a href="/admin/categories" class="btn btn-outline-secondary">
+                                                            <i class="bx bx-x me-1"></i> Hủy
+                                                        </a>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Card bên phải - Hướng dẫn -->
+                                    <div class="col-md-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    <i class="bx bx-help-circle text-primary me-1"></i> Hướng dẫn
+                                                </h5>
+                                                <hr>
+
+                                                <div class="mb-3">
+                                                    <h6 class="text-primary">
+                                                        <i class="bx bx-chevron-right"></i> Tên danh mục
+                                                    </h6>
+                                                    <p class="text-muted small mb-0">
+                                                        Đặt tên ngắn gọn, dễ hiểu và dễ nhớ.
+                                                    </p>
+                                                    <p class="text-muted small mb-0">
+                                                        <strong>Ví dụ:</strong> Bánh kem, Bánh sinh nhật, Bánh quy, Bánh
+                                                        mì...
+                                                    </p>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <h6 class="text-primary">
+                                                        <i class="bx bx-chevron-right"></i> Mô tả
+                                                    </h6>
+                                                    <p class="text-muted small mb-0">
+                                                        Viết mô tả chi tiết về các loại sản phẩm trong danh mục.
+                                                        Giúp khách hàng dễ dàng tìm kiếm và lựa chọn sản phẩm phù hợp.
+                                                    </p>
+                                                </div>
+
+                                                <div class="mb-0">
+                                                    <h6 class="text-primary">
+                                                        <i class="bx bx-chevron-right"></i> Trạng thái
+                                                    </h6>
+                                                    <p class="text-muted small mb-2">
+                                                        <strong>Bật:</strong> Danh mục hiển thị cho khách hàng
+                                                    </p>
+                                                    <p class="text-muted small mb-0">
+                                                        <strong>Tắt:</strong> Danh mục bị ẩn tạm thời (có thể bật lại
+                                                        sau)
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Lưu ý -->
+                                        <div class="card mt-3 border-warning">
+                                            <div class="card-body">
+                                                <h6 class="text-warning">
+                                                    <i class="bx bx-error-circle"></i> Lưu ý
+                                                </h6>
+                                                <ul class="small text-muted mb-0 ps-3">
+                                                    <li>Tên danh mục không được trùng lặp</li>
+                                                    <li>Nên thêm mô tả để khách hàng dễ hiểu hơn</li>
+                                                    <li>Có thể sửa hoặc xóa danh mục sau khi tạo</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+        </div>
+    </div>
+    <%- include('../partials/admin/scripts') %>
+        <script>
+            // Validate form trước khi submit
+            document.getElementById('categoryForm').addEventListener('submit', function (e) {
+                const categoryName = document.getElementById('categoryName').value.trim();
+
+                // Kiểm tra tên danh mục không được để trống
+                if (categoryName === '') {
+                    e.preventDefault();
+                    alert('Vui lòng nhập tên danh mục!');
+                    document.getElementById('categoryName').focus();
+                    return false;
+                }
+
+                // Kiểm tra độ dài tối thiểu
+                if (categoryName.length < 2) {
+                    e.preventDefault();
+                    alert('Tên danh mục phải có ít nhất 2 ký tự!');
+                    document.getElementById('categoryName').focus();
+                    return false;
+                }
+
+                // Kiểm tra độ dài tối đa
+                if (categoryName.length > 50) {
+                    e.preventDefault();
+                    alert('Tên danh mục không được quá 50 ký tự!');
+                    document.getElementById('categoryName').focus();
+                    return false;
+                }
+
+                return true;
+            });
+
+            // Tự động focus vào ô input đầu tiên
+            window.addEventListener('load', function () {
+                document.getElementById('categoryName').focus();
+            });
+        </script>
+</body>
+
+</html>

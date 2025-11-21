@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <%- include('../partials/admin/head') %>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <%- include('../partials/admin/navbar') %> <!-- / Menu -->
+
+                <!-- Layout container -->
+                <div class="layout-page">
+                    <!-- Navbar -->
+                    <%- include('../partials/admin/header') %>
+                        <!-- / Navbar -->
+
+                        <!-- Content wrapper -->
+                        <div class="content-wrapper">
+                            <!-- Content -->
+
+                            <div class="container-xxl flex-grow-1 container-p-y">
+                                <h4 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">Quản lý / Danh mục sản phẩm /</span> Sửa danh mục
+                                </h4>
+
+                                <!-- Flash Messages -->
+                                <% if (typeof success !=='undefined' && success.length> 0) { %>
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>Thành công!</strong>
+                                        <%= success %>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    <% } %>
+                                        <% if (typeof error !=='undefined' && error.length> 0) { %>
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <strong>Lỗi!</strong>
+                                                <%= error %>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="alert"></button>
+                                            </div>
+                                            <% } %>
+
+                                                <!-- Form sửa danh mục -->
+                                                <div class="row">
+                                                    <div class="col-md-8">
+                                                        <div class="card mb-4">
+                                                            <div
+                                                                class="card-header d-flex justify-content-between align-items-center">
+                                                                <h5 class="mb-0">
+                                                                    <i class="bx bx-edit me-2"></i>Chỉnh sửa thông tin
+                                                                    danh mục
+                                                                </h5>
+                                                                <small class="text-muted">ID: <%= category._id %>
+                                                                </small>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <form
+                                                                    action="/admin/categories/edit/<%= category._id %>"
+                                                                    method="POST" id="editCategoryForm">
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="categoryName">
+                                                                            Tên danh mục <span
+                                                                                class="text-danger">*</span>
+                                                                        </label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="categoryName" name="name"
+                                                                            value="<%= category.name %>"
+                                                                            placeholder="Ví dụ: Bánh kem, Bánh quy, Bánh mì..."
+                                                                            required />
+                                                                        <div class="form-text">Tên danh mục sẽ hiển thị
+                                                                            trên website</div>
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label" for="categoryDesc">Mô
+                                                                            tả</label>
+                                                                        <textarea class="form-control" id="categoryDesc"
+                                                                            name="description" rows="5"
+                                                                            placeholder="Nhập mô tả chi tiết về danh mục sản phẩm này..."><%= category.description || '' %></textarea>
+                                                                        <div class="form-text">Mô tả ngắn gọn giúp khách
+                                                                            hàng hiểu rõ hơn về danh mục</div>
+                                                                    </div>
+
+                                                                    <div class="mb-4">
+                                                                        <label class="form-label d-block">Trạng
+                                                                            thái</label>
+                                                                        <div
+                                                                            class="form-check form-switch form-check-inline">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox" name="isActive"
+                                                                                id="isActive" <%=category.isActive
+                                                                                ? 'checked' : '' %> />
+                                                                            <label class="form-check-label"
+                                                                                for="isActive">
+                                                                                <strong>Hiển thị danh mục trên
+                                                                                    website</strong>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-text">
+                                                                            <i class="bx bx-info-circle"></i>
+                                                                            Bật để khách hàng có thể xem danh mục này,
+                                                                            tắt để tạm ẩn
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <hr class="my-4">
+
+                                                                    <div class="d-flex gap-2">
+                                                                        <button type="submit" class="btn btn-primary">
+                                                                            <i class="bx bx-save me-1"></i> Cập nhật
+                                                                            danh mục
+                                                                        </button>
+                                                                        <a href="/admin/categories"
+                                                                            class="btn btn-outline-secondary">
+                                                                            <i class="bx bx-x me-1"></i> Hủy
+                                                                        </a>
+                                                                        <button type="button"
+                                                                            class="btn btn-outline-danger ms-auto"
+                                                                            onclick="confirmDelete()">
+                                                                            <i class="bx bx-trash me-1"></i> Xóa danh
+                                                                            mục
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Card bên phải - Thông tin -->
+                                                    <div class="col-md-4">
+                                                        <!-- Thông tin danh mục -->
+                                                        <div class="card mb-3">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title">
+                                                                    <i class="bx bx-info-circle text-primary me-1"></i>
+                                                                    Thông tin
+                                                                </h5>
+                                                                <hr>
+
+                                                                <div class="mb-2">
+                                                                    <small class="text-muted d-block">Ngày tạo:</small>
+                                                                    <strong>
+                                                                        <%= new
+                                                                            Date(category.createdAt).toLocaleString('vi-VN')
+                                                                            %>
+                                                                    </strong>
+                                                                </div>
+
+                                                                <div class="mb-2">
+                                                                    <small class="text-muted d-block">Cập nhật lần
+                                                                        cuối:</small>
+                                                                    <strong>
+                                                                        <%= new
+                                                                            Date(category.updatedAt).toLocaleString('vi-VN')
+                                                                            %>
+                                                                    </strong>
+                                                                </div>
+
+                                                                <div class="mb-0">
+                                                                    <small class="text-muted d-block">Số sản
+                                                                        phẩm:</small>
+                                                                    <span class="badge bg-label-info">
+                                                                        <%= category.productCount || 0 %> sản phẩm
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Hướng dẫn -->
+                                                        <div class="card bg-light">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title">
+                                                                    <i class="bx bx-help-circle text-primary me-1"></i>
+                                                                    Hướng dẫn
+                                                                </h5>
+                                                                <hr>
+
+                                                                <div class="mb-3">
+                                                                    <h6 class="text-primary">
+                                                                        <i class="bx bx-chevron-right"></i> Tên danh mục
+                                                                    </h6>
+                                                                    <p class="text-muted small mb-0">
+                                                                        Chỉnh sửa tên danh mục nếu cần thiết. Tên mới
+                                                                        không được trùng với danh mục khác.
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <h6 class="text-primary">
+                                                                        <i class="bx bx-chevron-right"></i> Mô tả
+                                                                    </h6>
+                                                                    <p class="text-muted small mb-0">
+                                                                        Cập nhật mô tả để phù hợp với các sản phẩm hiện
+                                                                        tại trong danh mục.
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="mb-0">
+                                                                    <h6 class="text-primary">
+                                                                        <i class="bx bx-chevron-right"></i> Xóa danh mục
+                                                                    </h6>
+                                                                    <p class="text-muted small mb-0">
+                                                                        Chỉ xóa danh mục khi không còn sản phẩm nào.
+                                                                        Thao tác này không thể hoàn tác.
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                            </div>
+                        </div>
+                </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <%- include('../partials/admin/scripts') %>
+
+        <script>
+            // Validate form trước khi submit
+            document.getElementById('editCategoryForm').addEventListener('submit', function (e) {
+                const categoryName = document.getElementById('categoryName').value.trim();
+
+                if (categoryName === '') {
+                    e.preventDefault();
+                    alert('Vui lòng nhập tên danh mục!');
+                    document.getElementById('categoryName').focus();
+                    return false;
+                }
+
+                if (categoryName.length < 2) {
+                    e.preventDefault();
+                    alert('Tên danh mục phải có ít nhất 2 ký tự!');
+                    document.getElementById('categoryName').focus();
+                    return false;
+                }
+
+                if (categoryName.length > 50) {
+                    e.preventDefault();
+                    alert('Tên danh mục không được quá 50 ký tự!');
+                    document.getElementById('categoryName').focus();
+                    return false;
+                }
+
+                return true;
+            });
+
+            // Xác nhận xóa danh mục
+            function confirmDelete() {
+                const categoryId = '<%= category._id %>';
+                const categoryName = '<%= category.name %>';
+
+                if (confirm(`Bạn có chắc chắn muốn xóa danh mục "${categoryName}"?\n\nThao tác này không thể hoàn tác!`)) {
+                    fetch(`/admin/categories/delete/${categoryId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Xóa danh mục thành công!');
+                                window.location.href = '/admin/categories';
+                            } else {
+                                alert('Có lỗi xảy ra: ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            alert('Có lỗi xảy ra khi xóa danh mục!');
+                            console.error(error);
+                        });
+                }
+            }
+        </script>
+</body>
+
+</html>
