@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>
+		<%= title %> - Hien Bakery Shop
+	</title>
+	<%- include('../partials/user/head') %>
+</head>
+
+<body class="goto-here">
+	<%- include('../partials/user/header') %>
+
+		<div class="hero-wrap hero-bread" style="background-image: url('/images/slideshow_8.png');">
+			<div class="container">
+				<div class="row no-gutters slider-text align-items-center justify-content-center">
+					<div class="col-md-9 ftco-animate text-center">
+						<p class="breadcrumbs">
+							<span class="mr-2"><a href="/">Trang chủ</a></span>
+							<span class="mr-2"><a href="/cart">Giỏ hàng</a></span>
+							<span>Thanh toán</span>
+						</p>
+						<h1 class="mb-0 bread">Thanh toán</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<section class="ftco-section">
+			<div class="container">
+				<form id="checkoutForm">
+					<div class="row justify-content-center">
+						<!-- Thông tin nhận hàng -->
+						<div class="col-xl-7 ftco-animate">
+							<h3 class="mb-4 billing-heading">Thông tin nhận hàng</h3>
+
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="customerName">Tên người nhận <span
+												class="text-danger">*</span></label>
+										<input type="text" class="form-control" id="customerName" name="customerName"
+											value="<%= user.username %>" required>
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="phone">Số điện thoại <span class="text-danger">*</span></label>
+										<input type="tel" class="form-control" id="phone" name="phone"
+											placeholder="0912345678" required>
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="email">Email</label>
+										<input type="email" class="form-control" id="email" name="email"
+											value="<%= user.email %>">
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="shippingAddress">Địa chỉ nhận hàng <span
+												class="text-danger">*</span></label>
+										<textarea class="form-control" id="shippingAddress" name="shippingAddress"
+											rows="3"
+											placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
+											required></textarea>
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="deliveryDate">Ngày nhận hàng <span
+												class="text-danger">*</span></label>
+										<input type="date" class="form-control" id="deliveryDate" name="deliveryDate"
+											required>
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="deliveryTime">Giờ nhận hàng <span
+												class="text-danger">*</span></label>
+										<select class="form-control" id="deliveryTime" name="deliveryTime" required>
+											<option value="">-- Chọn giờ --</option>
+											<option value="08:00-10:00">08:00 - 10:00</option>
+											<option value="10:00-12:00">10:00 - 12:00</option>
+											<option value="14:00-16:00">14:00 - 16:00</option>
+											<option value="16:00-18:00">16:00 - 18:00</option>
+											<option value="18:00-20:00">18:00 - 20:00</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="note">Ghi chú</label>
+										<textarea class="form-control" id="note" name="note" rows="2"
+											placeholder="Ghi chú cho đơn hàng (tùy chọn)"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Tổng đơn hàng -->
+						<div class="col-xl-5">
+							<div class="row mt-5 pt-3">
+								<div class="col-md-12 d-flex mb-5">
+									<div class="cart-detail cart-total p-3 p-md-4 w-100">
+										<h3 class="billing-heading mb-4">Đơn hàng của bạn</h3>
+
+										<!-- Danh sách sản phẩm -->
+										<% cart.items.forEach(item=> { %>
+											<div class="d-flex justify-content-between mb-2">
+												<span>
+													<%= item.product.name %> x <%= item.quantity %>
+												</span>
+												<span>
+													<%= (item.product.price * item.quantity).toLocaleString('vi-VN') %>₫
+												</span>
+											</div>
+											<% }) %>
+
+												<hr>
+
+												<p class="d-flex justify-content-between">
+													<span>Tạm tính</span>
+													<span>
+														<%= subtotal.toLocaleString('vi-VN') %>₫
+													</span>
+												</p>
+												<p class="d-flex justify-content-between">
+													<span>Phí vận chuyển</span>
+													<span id="shippingFeeText">
+														<% if (shippingFee===0) { %>
+															<span class="text-success">Miễn phí</span>
+															<% } else { %>
+																<%= shippingFee.toLocaleString('vi-VN') %>₫
+																	<% } %>
+													</span>
+												</p>
+
+												<% if (subtotal>= 1500000) { %>
+													<p class="text-success small">
+														<i class="icon-check"></i> Đơn hàng đủ điều kiện miễn phí ship!
+													</p>
+													<% } else { %>
+														<p class="text-muted small">
+															Mua thêm <%= (1500000 - subtotal).toLocaleString('vi-VN') %>
+																₫ để được miễn phí ship
+														</p>
+														<% } %>
+
+															<hr>
+															<p class="d-flex justify-content-between total-price">
+																<span><strong>Tổng cộng</strong></span>
+																<span><strong>
+																		<%= total.toLocaleString('vi-VN') %>₫
+																	</strong></span>
+															</p>
+									</div>
+								</div>
+
+								<!-- Phương thức thanh toán -->
+								<div class="col-md-12">
+									<div class="cart-detail p-3 p-md-4">
+										<h3 class="billing-heading mb-4">Phương thức thanh toán</h3>
+
+										<div class="form-group">
+											<div class="radio">
+												<label>
+													<input type="radio" name="paymentMethod" value="cod" checked>
+													<strong>Thanh toán khi nhận hàng (COD)</strong>
+												</label>
+												<p class="text-muted small ml-4">Thanh toán bằng tiền mặt khi nhận hàng
+												</p>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<div class="radio">
+												<label>
+													<input type="radio" name="paymentMethod" value="bank_transfer">
+													<strong>Chuyển khoản ngân hàng</strong>
+												</label>
+												<p class="text-muted small ml-4">Chuyển khoản trước khi nhận hàng</p>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" id="agreeTerms" required>
+													Tôi đã đọc và đồng ý với <a href="#">điều khoản và điều kiện</a>
+												</label>
+											</div>
+										</div>
+
+										<button type="submit" class="btn btn-primary py-3 px-4 w-100">
+											Đặt hàng
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</section>
+		<!-- Modal QR Code -->
+		<div class="modal fade" id="qrModal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Thanh toán chuyển khoản</h5>
+						<button type="button" class="close" data-dismiss="modal">
+							<span>&times;</span>
+						</button>
+					</div>
+					<div class="modal-body text-center">
+						<div id="qrContent">
+							<!-- QR code sẽ được load vào đây -->
+							<div class="spinner-border text-primary" role="status">
+								<span class="sr-only">Loading...</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<%- include('../partials/user/footer') %>
+			<%- include('../partials/user/load') %>
+				<%- include('../partials/user/scripts') %>
+
+					<script>
+						// Set ngày tối thiểu là ngày mai
+						const tomorrow = new Date();
+						tomorrow.setDate(tomorrow.getDate() + 1);
+						document.getElementById('deliveryDate').min = tomorrow.toISOString().split('T')[0];
+
+						// Xử lý form submit
+						document.getElementById('checkoutForm').addEventListener('submit', async function (e) {
+							e.preventDefault();
+
+							if (!document.getElementById('agreeTerms').checked) {
+								alert('Vui lòng đồng ý với điều khoản và điều kiện!');
+								return;
+							}
+
+							const formData = new FormData(this);
+							const data = Object.fromEntries(formData);
+
+							// Disable button để tránh click nhiều lần
+							const submitBtn = this.querySelector('button[type="submit"]');
+							const originalText = submitBtn.innerHTML;
+							submitBtn.disabled = true;
+							submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm mr-2"></span>Đang xử lý...';
+
+							try {
+								const response = await fetch('/checkout/process', {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json'
+									},
+									body: JSON.stringify(data)
+								});
+
+								const result = await response.json();
+
+								if (result.success) {
+									// Nếu thanh toán chuyển khoản, hiển thị QR
+									if (result.paymentMethod === 'bank_transfer' && result.qrData && result.qrData.success) {
+										showQRModal(result.qrData, result.orderNumber);
+									} else {
+										// Thanh toán COD - chuyển luôn đến trang đơn hàng
+										alert(result.message);
+										window.location.href = '/orders';
+									}
+								} else {
+									alert(result.message);
+									submitBtn.disabled = false;
+									submitBtn.innerHTML = originalText;
+								}
+							} catch (error) {
+								console.error('Error:', error);
+								alert('Có lỗi xảy ra!');
+								submitBtn.disabled = false;
+								submitBtn.innerHTML = originalText;
+							}
+						});
+
+						// Hiển thị QR Code Modal
+						function showQRModal(qrData, orderNumber) {
+							const qrContent = document.getElementById('qrContent');
+
+							qrContent.innerHTML = `
+			            <div class="qr-payment-info">
+			                <h5 class="mb-3">Quét mã QR để thanh toán</h5>
+			                
+			                <!-- QR Code -->
+			                <div class="mb-3">
+			                    <img src="${qrData.qrUrl}" alt="QR Code" class="img-fluid" style="max-width: 300px; border: 2px solid #ddd; border-radius: 8px; padding: 10px;">
+			                </div>
+			                
+			                <!-- Thông tin chuyển khoản -->
+			                <div class="bank-info text-left bg-light p-3 rounded">
+			                    <p class="mb-2"><strong>Ngân hàng:</strong> ${qrData.bankInfo.bankName}</p>
+			                    <p class="mb-2"><strong>Số tài khoản:</strong> ${qrData.bankInfo.accountNo}</p>
+			                    <p class="mb-2"><strong>Chủ tài khoản:</strong> ${qrData.bankInfo.accountName}</p>
+			                    <p class="mb-2"><strong>Số tiền:</strong> <span class="text-danger font-weight-bold">${qrData.bankInfo.amount.toLocaleString('vi-VN')}₫</span></p>
+			                    <p class="mb-0"><strong>Nội dung:</strong> ${qrData.bankInfo.content}</p>
+			                </div>
+			                
+			                <div class="alert alert-info mt-3 mb-0">
+			                    <small><i class="icon-info-circle"></i> Vui lòng chuyển khoản đúng nội dung để đơn hàng được xử lý tự động</small>
+			                </div>
+			                
+			                <button class="btn btn-primary mt-3" onclick="window.location.href='/orders'">
+			                    Tôi đã chuyển khoản
+			                </button>
+			            </div>
+			        `;
+
+							// Hiển thị modal
+							$('#qrModal').modal('show');
+
+							// Khi đóng modal, chuyển đến trang đơn hàng
+							$('#qrModal').on('hidden.bs.modal', function () {
+								window.location.href = '/orders';
+							});
+						}
+					</script>
+
+					<style>
+						.qr-payment-info .bank-info {
+							max-width: 400px;
+							margin: 0 auto;
+						}
+
+						.qr-payment-info .bank-info p {
+							border-bottom: 1px solid #e0e0e0;
+							padding-bottom: 8px;
+						}
+
+						.qr-payment-info .bank-info p:last-child {
+							border-bottom: none;
+						}
+
+						#qrModal .modal-content {
+							border-radius: 10px;
+						}
+					</style>
+
+</body>
+
+</html>

@@ -2272,7 +2272,7 @@ fieldset:disabled a.btn {
   color: #007bff;
   border-color: #007bff; }
   .btn-outline-primary:hover {
-    color: #fff;
+    color: #0d0303;
     background-color: #007bff;
     border-color: #007bff; }
   .btn-outline-primary:focus, .btn-outline-primary.focus {
@@ -3414,7 +3414,7 @@ input[type="button"].btn-block {
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
   color: #fff;
-  background-color: #007bff; }
+  background-color: #000; }
 
 .nav-fill .nav-item {
   -webkit-box-flex: 1;

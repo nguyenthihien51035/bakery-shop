@@ -3,6 +3,8 @@ const router = express.Router();
 const homeController = require('../controllers/homeController');
 const cartController = require('../controllers/cartController');
 const productController = require('../controllers/productController');
+const checkoutController = require('../controllers/checkoutController');
+
 
 // Trang chủ
 router.get('/', homeController.getHome);
@@ -20,4 +22,7 @@ router.get('/products', productController.getAllProducts);
 router.get('/products/search', productController.searchProducts);
 router.get('/products/category/:categoryId', productController.getProductsByCategory);
 router.get('/products/:id', productController.getProductDetail);
+
+router.get('/checkout', checkoutController.getCheckout);
+router.post('/checkout/process', checkoutController.processOrder);
 module.exports = router;

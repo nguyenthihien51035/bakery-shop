@@ -71,7 +71,7 @@
 												</td>
 
 												<td class="price">
-													<%= item.price.toLocaleString('vi-VN') %>₫
+													<%= item.price.toLocaleString('vi-VN') %>đ
 												</td>
 
 												<td class="quantity">
@@ -82,8 +82,8 @@
 													</div>
 												</td>
 
-												<td class="total">
-													<%= item.total.toLocaleString('vi-VN') %>₫
+												<td class="total" id="item-total-<%= item.productId %>">
+													<%= item.total.toLocaleString('vi-VN') %>đ
 												</td>
 											</tr>
 											<% }) %>
@@ -111,27 +111,27 @@
 							<h3>Tổng giỏ hàng</h3>
 							<p class="d-flex">
 								<span>Tạm tính</span>
-								<span>
-									<%= subtotal.toLocaleString('vi-VN') %>₫
+								<span id="cart-subtotal">
+									<%= subtotal.toLocaleString('vi-VN') %>đ
 								</span>
 							</p>
 							<p class="d-flex">
 								<span>Phí vận chuyển</span>
 								<span>
-									<%= shipping.toLocaleString('vi-VN') %>₫
+									<%= shipping.toLocaleString('vi-VN') %>đ
 								</span>
 							</p>
 							<p class="d-flex">
 								<span>Giảm giá</span>
 								<span>
-									<%= discount.toLocaleString('vi-VN') %>₫
+									<%= discount.toLocaleString('vi-VN') %>đ
 								</span>
 							</p>
 							<hr>
 							<p class="d-flex total-price">
 								<span>Tổng cộng</span>
-								<span>
-									<%= total.toLocaleString('vi-VN') %>₫
+								<span id="cart-total">
+									<%= total.toLocaleString('vi-VN') %>đ
 								</span>
 							</p>
 						</div>
@@ -178,6 +178,8 @@
 
 					// Cập nhật số lượng
 					function updateQuantity(productId, quantity) {
+						quantity = parseInt(quantity);
+
 						if (quantity < 1) {
 							alert('Số lượng phải lớn hơn 0!');
 							location.reload();
@@ -197,8 +199,26 @@
 							.then(response => response.json())
 							.then(data => {
 								if (data.success) {
+									// Cập nhật số lượng trên header
 									document.getElementById('cart-count').textContent = data.cartCount;
-									location.reload();
+
+									// Cập nhật tổng tiền của item
+									const itemTotal = data.itemTotal; // Backend cần trả về
+									const itemTotalElement = document.getElementById('item-total-' + productId);
+									if (itemTotalElement && itemTotal !== undefined) {
+										itemTotalElement.textContent = itemTotal.toLocaleString('vi-VN') + '₫';
+									}
+
+									// Cập nhật tổng giỏ hàng
+									if (data.cartSummary) {
+										document.getElementById('cart-subtotal').textContent =
+											data.cartSummary.subtotal.toLocaleString('vi-VN') + '₫';
+										document.getElementById('cart-total').textContent =
+											data.cartSummary.total.toLocaleString('vi-VN') + '₫';
+									}
+
+									// Hiển thị thông báo (không reload)
+									showNotification('success', 'Đã cập nhật số lượng!');
 								} else {
 									alert(data.message);
 								}
@@ -208,7 +228,58 @@
 								alert('Có lỗi xảy ra!');
 							});
 					}
+
+					// Thêm hàm hiển thị thông báo
+					function showNotification(type, message) {
+						const notification = document.createElement('div');
+						notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} notification-popup`;
+						notification.innerHTML = `<strong>${message}</strong>`;
+
+						notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 250px;
+        padding: 15px 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease-out;
+    `;
+
+						document.body.appendChild(notification);
+
+						setTimeout(() => {
+							notification.style.animation = 'slideOutRight 0.3s ease-out';
+							setTimeout(() => notification.remove(), 300);
+						}, 2000);
+					}
 				</script>
+				<style>
+					@keyframes slideInRight {
+						from {
+							transform: translateX(100%);
+							opacity: 0;
+						}
+
+						to {
+							transform: translateX(0);
+							opacity: 1;
+						}
+					}
+
+					@keyframes slideOutRight {
+						from {
+							transform: translateX(0);
+							opacity: 1;
+						}
+
+						to {
+							transform: translateX(100%);
+							opacity: 0;
+						}
+					}
+				</style>
 </body>
 
 </html>

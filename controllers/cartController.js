@@ -219,34 +219,90 @@ exports.removeFromCart = async (req, res) => {
     }
 };
 
-// Cập nhật số lượng sản phẩm
 exports.updateCartQuantity = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
         
-        if (!req.session.cart) {
-            return res.json({ success: false, message: 'Giỏ hàng trống!' });
-        }
-        
-        // Tìm và cập nhật số lượng
-        const item = req.session.cart.find(item => item.productId === productId);
-        if (item) {
-            item.quantity = parseInt(quantity);
-            
-            // Cập nhật tổng số lượng
-            req.session.cartCount = req.session.cart.reduce((total, item) => total + item.quantity, 0);
-            
-            res.json({
-                success: true,
-                message: 'Đã cập nhật số lượng!',
-                cartCount: req.session.cartCount
+        // Validate
+        if (!productId || !quantity || quantity < 1) {
+            return res.json({
+                success: false,
+                message: 'Dữ liệu không hợp lệ!'
             });
-        } else {
-            res.json({ success: false, message: 'Không tìm thấy sản phẩm!' });
         }
+
+        // Lấy giỏ hàng từ session
+        let cart = req.session.cart || [];
         
+        // Tìm sản phẩm trong giỏ
+        const itemIndex = cart.findIndex(item => item.productId === productId);
+        
+        if (itemIndex === -1) {
+            return res.json({
+                success: false,
+                message: 'Không tìm thấy sản phẩm trong giỏ hàng!'
+            });
+        }
+
+        // Cập nhật số lượng
+        cart[itemIndex].quantity = parseInt(quantity);
+        
+        // Lưu lại session
+        req.session.cart = cart;
+
+        // Lấy thông tin sản phẩm từ DB để tính giá
+        const product = await Product.findById(productId);
+        
+        if (!product) {
+            return res.json({
+                success: false,
+                message: 'Không tìm thấy sản phẩm!'
+            });
+        }
+
+        // Tính tổng tiền của item vừa cập nhật
+        const itemTotal = product.price * parseInt(quantity);
+
+        // Tính tổng giỏ hàng
+        const productIds = cart.map(item => item.productId);
+        const products = await Product.find({ _id: { $in: productIds }, isActive: true });
+        
+        let subtotal = 0;
+        cart.forEach(cartItem => {
+            const prod = products.find(p => p._id.toString() === cartItem.productId);
+            if (prod) {
+                subtotal += prod.price * cartItem.quantity;
+            }
+        });
+
+        // Tính tổng số lượng items
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        
+        // Cập nhật cartCount trong session
+        req.session.cartCount = totalItems;
+
+        const shipping = subtotal >= 1500000 ? 0 : 30000; // Miễn phí ship nếu >= 1tr500
+        const discount = 0;
+        const total = subtotal + shipping - discount;
+
+        res.json({
+            success: true,
+            message: 'Đã cập nhật giỏ hàng!',
+            cartCount: totalItems,
+            itemTotal: itemTotal,
+            cartSummary: {
+                subtotal,
+                shipping,
+                discount,
+                total
+            }
+        });
+
     } catch (error) {
         console.error('Lỗi cập nhật giỏ hàng:', error);
-        res.json({ success: false, message: 'Có lỗi xảy ra!' });
+        res.json({
+            success: false,
+            message: 'Có lỗi xảy ra khi cập nhật giỏ hàng!'
+        });
     }
 };
