@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Category = require('../models/category');
 
 exports.getWishlist = async (req, res) => {
     try {
@@ -11,9 +12,12 @@ exports.getWishlist = async (req, res) => {
                 isActive: true
             }).populate('category', 'name');
         }
+
+        const categories = await Category.find({ isActive: true }).sort({ name: 1 });
         
         res.render('user/wishlist', {
             products: wishlistProducts,
+            categories: categories,
             title: 'Sản phẩm yêu thích - Hien Bakery Shop',
             session: req.session
         });
@@ -166,8 +170,11 @@ exports.getCart = async (req, res) => {
         const discount = 0; // Chưa có mã giảm giá
         const total = subtotal + shipping - discount;
         
+        const categories = await Category.find({ isActive: true }).sort({ name: 1 });
+
         res.render('user/cart', {
             cartItems: cartItems,
+            categories: categories,
             subtotal: subtotal,
             shipping: shipping,
             discount: discount,
@@ -175,7 +182,7 @@ exports.getCart = async (req, res) => {
             title: 'Giỏ hàng - Hien Bakery Shop',
             session: req.session
         });
-        
+
     } catch (error) {
         console.error('Lỗi khi lấy giỏ hàng:', error);
         res.status(500).send('Có lỗi xảy ra');

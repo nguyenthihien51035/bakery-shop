@@ -33,12 +33,18 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active"><a href="/" class="nav-link">Trang chủ</a></li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown"
+                    <a class="nav-link dropdown-toggle" href="/products" id="dropdown04" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">Sản phẩm</a>
                     <div class="dropdown-menu" aria-labelledby="dropdown04">
-                        <a class="dropdown-item" href="/products/category/banh-sinh-nhat">Bánh sinh nhật</a>
-                        <a class="dropdown-item" href="/products/category/banh-le">Bánh lẻ</a>
-                        <a class="dropdown-item" href="/products/category/do-uong">Đồ uống</a>
+                        <a class="dropdown-item" href="/products">Tất cả sản phẩm</a>
+                        <div class="dropdown-divider"></div>
+                        <% if (typeof categories !=='undefined' && categories.length> 0) { %>
+                            <% categories.forEach(cat=> { %>
+                                <a class="dropdown-item" href="/products/category/<%= cat._id %>">
+                                    <%= cat.name %>
+                                </a>
+                                <% }) %>
+                                    <% } %>
                     </div>
                 </li>
                 <li class="nav-item cta cta-colored">

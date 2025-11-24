@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        <%= product.name %> - Hien Bakery Shop
+    </title>
+    <%- include('../partials/user/head') %>
+</head>
+
+<body class="goto-here">
+    <%- include('../partials/user/header') %>
+
+        <div class="hero-wrap hero-bread" style="background-image: url('/images/slideshow_7.png');">
+            <div class="container">
+                <div class="row no-gutters slider-text align-items-center justify-content-center">
+                    <div class="col-md-9 ftco-animate text-center">
+                        <p class="breadcrumbs">
+                            <span class="mr-2"><a href="/">Trang chủ</a></span>
+                            <span class="mr-2"><a href="/products">Sản phẩm</a></span>
+                            <span>
+                                <%= product.name %>
+                            </span>
+                        </p>
+                        <h1 class="mb-0 bread">Chi tiết sản phẩm</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="ftco-section">
+            <div class="container">
+                <div class="row">
+                    <!-- Hình ảnh sản phẩm -->
+                    <div class="col-lg-6 mb-5 ftco-animate">
+                        <% if (product.images && product.images.length> 0) { %>
+                            <!-- Ảnh chính -->
+                            <div class="product-image-main mb-3">
+                                <img id="mainImage" src="/uploads/products/<%= product.images[0] %>"
+                                    class="img-fluid rounded" alt="<%= product.name %>"
+                                    style="width: 100%; height: 500px; object-fit: cover;">
+                            </div>
+
+                            <!-- Thumbnail ảnh phụ -->
+                            <% if (product.images.length> 1) { %>
+                                <div class="product-thumbnails d-flex">
+                                    <% product.images.forEach((image, index)=> { %>
+                                        <div class="thumbnail-item mr-2" style="cursor: pointer;">
+                                            <img src="/uploads/products/<%= image %>"
+                                                class="img-thumbnail <%= index === 0 ? 'active-thumbnail' : '' %>"
+                                                alt="<%= product.name %>"
+                                                style="width: 100px; height: 100px; object-fit: cover;"
+                                                onclick="changeMainImage('/uploads/products/<%= image %>', this)">
+                                        </div>
+                                        <% }) %>
+                                </div>
+                                <% } %>
+                                    <% } else { %>
+                                        <img src="/images/no-image.jpg" class="img-fluid rounded" alt="No image">
+                                        <% } %>
+                    </div>
+
+                    <!-- Thông tin sản phẩm -->
+                    <div class="col-lg-6 product-details pl-md-5 ftco-animate">
+                        <h3>
+                            <%= product.name %>
+                        </h3>
+
+                        <!-- Đánh giá -->
+                        <div class="rating d-flex mb-3">
+                            <p class="text-left mr-4">
+                                <span class="mr-2">5.0</span>
+                                <span class="ion-ios-star-outline"></span>
+                                <span class="ion-ios-star-outline"></span>
+                                <span class="ion-ios-star-outline"></span>
+                                <span class="ion-ios-star-outline"></span>
+                                <span class="ion-ios-star-outline"></span>
+                            </p>
+                            <p class="text-left mr-4">
+                                <a href="#" class="mr-2" style="color: #000;">100 <span style="color: #bbb;">Đánh
+                                        giá</span></a>
+                            </p>
+                            <p class="text-left">
+                                <a href="#" class="mr-2" style="color: #000;">500 <span style="color: #bbb;">Đã
+                                        bán</span></a>
+                            </p>
+                        </div>
+
+                        <!-- Giá -->
+                        <div class="pricing mb-3">
+                            <p class="price">
+                                <span class="h2 text-danger font-weight-bold">
+                                    <%= product.price.toLocaleString('vi-VN') %>₫
+                                </span>
+                            </p>
+                        </div>
+
+                        <!-- Mô tả ngắn -->
+                        <% if (product.description) { %>
+                            <div class="product-description mb-4">
+                                <p>
+                                <pre
+                                    style="white-space: pre-wrap; font-family: inherit; margin-bottom: 0;"><%= product.description %></pre>
+                                </p>
+                            </div>
+                            <% } %>
+
+                                <!-- Số lượng và thêm vào giỏ -->
+                                <div class="row mt-4">
+                                    <div class="col-md-12">
+                                        <p class="mb-2"><strong>Số lượng:</strong></p>
+                                        <div class="input-group mb-3" style="max-width: 150px;">
+                                            <div class="input-group-prepend">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    onclick="decreaseQuantity()">
+                                                    <span class="ion-ios-remove"></span>
+                                                </button>
+                                            </div>
+                                            <input type="number" id="quantity" class="form-control text-center"
+                                                value="1" min="1" max="100">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    onclick="increaseQuantity()">
+                                                    <span class="ion-ios-add"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-100"></div>
+
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary py-3 px-5 mr-2" onclick="addToCartDetail()">
+                                            <i class="ion-ios-cart mr-2"></i>Thêm vào giỏ hàng
+                                        </button>
+                                        <button class="btn btn-outline-primary py-3 px-5"
+                                            onclick="addToWishlistDetail()">
+                                            <i class="ion-ios-heart mr-2"></i>Yêu thích
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Thông tin bổ sung -->
+                                <div class="product-meta mt-4 pt-4 border-top">
+                                    <p><strong>Danh mục:</strong>
+                                        <%= product.category ? product.category.name : 'Chưa phân loại' %>
+                                    </p>
+                                    <% if (product.size) { %>
+                                        <p><strong>Kích thước:</strong>
+                                            <%= product.size %>
+                                        </p>
+                                        <% } %>
+                                            <p><strong>Mã sản phẩm:</strong>
+                                                <%= product._id %>
+                                            </p>
+                                </div>
+                    </div>
+                </div>
+
+                <!-- Tab mô tả chi tiết -->
+                <div class="row mt-5">
+                    <div class="col-md-12 nav-link-wrap">
+                        <div class="nav nav-pills d-flex text-center" id="v-pills-tab" role="tablist"
+                            aria-orientation="vertical">
+                            <a class="nav-link ftco-animate active mr-3" id="v-pills-1-tab" data-toggle="pill"
+                                href="#v-pills-1" role="tab" aria-controls="v-pills-1" aria-selected="true">Mô tả</a>
+                            <a class="nav-link ftco-animate mr-3" id="v-pills-2-tab" data-toggle="pill"
+                                href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="false">Thông
+                                tin</a>
+                            <a class="nav-link ftco-animate" id="v-pills-3-tab" data-toggle="pill" href="#v-pills-3"
+                                role="tab" aria-controls="v-pills-3" aria-selected="false">Đánh giá</a>
+                        </div>
+                    </div>
+                    <div class="col-md-12 tab-wrap">
+                        <div class="tab-content bg-light" id="v-pills-tabContent">
+                            <!-- Mô tả -->
+                            <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel"
+                                aria-labelledby="day-1-tab">
+                                <div class="p-4">
+                                    <h3 class="mb-4">Mô tả sản phẩm</h3>
+                                    <pre
+                                        style="white-space: pre-wrap; font-family: inherit;"><%= product.description || 'Chưa có mô tả chi tiết cho sản phẩm này.' %></pre>
+                                </div>
+                            </div>
+
+                            <!-- Thông tin -->
+                            <div class="tab-pane fade" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-2-tab">
+                                <div class="p-4">
+                                    <h3 class="mb-4">Thông tin sản phẩm</h3>
+                                    <ul class="list-unstyled">
+                                        <li><strong>Tên sản phẩm:</strong>
+                                            <%= product.name %>
+                                        </li>
+                                        <li><strong>Giá:</strong>
+                                            <%= product.price.toLocaleString('vi-VN') %>₫
+                                        </li>
+                                        <li><strong>Danh mục:</strong>
+                                            <%= product.category ? product.category.name : 'Chưa phân loại' %>
+                                        </li>
+                                        <% if (product.size) { %>
+                                            <li><strong>Kích thước:</strong>
+                                                <%= product.size %>
+                                            </li>
+                                            <% } %>
+                                                <li><strong>Tình trạng:</strong>
+                                                    <%= product.isActive ? 'Còn hàng' : 'Ngừng bán' %>
+                                                </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Đánh giá -->
+                            <div class="tab-pane fade" id="v-pills-3" role="tabpanel" aria-labelledby="v-pills-3-tab">
+                                <div class="p-4">
+                                    <h3 class="mb-4">Đánh giá của khách hàng</h3>
+                                    <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sản phẩm liên quan -->
+        <section class="ftco-section bg-light">
+            <div class="container">
+                <div class="row justify-content-center mb-3 pb-3">
+                    <div class="col-md-12 heading-section text-center ftco-animate">
+                        <span class="subheading">Sản phẩm</span>
+                        <h2 class="mb-4">Sản phẩm liên quan</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <% if (relatedProducts && relatedProducts.length> 0) { %>
+                        <% relatedProducts.forEach(relatedProduct=> { %>
+                            <div class="col-md-6 col-lg-3 ftco-animate">
+                                <div class="product">
+                                    <a href="/products/<%= relatedProduct._id %>" class="img-prod">
+                                        <% if (relatedProduct.images && relatedProduct.images.length> 0) { %>
+                                            <img class="img-fluid"
+                                                src="/uploads/products/<%= relatedProduct.images[0] %>"
+                                                alt="<%= relatedProduct.name %>">
+                                            <% } else { %>
+                                                <img class="img-fluid" src="/images/no-image.jpg" alt="No image">
+                                                <% } %>
+                                                    <div class="overlay"></div>
+                                    </a>
+                                    <div class="text py-3 pb-4 px-3 text-center">
+                                        <h3><a href="/products/<%= relatedProduct._id %>">
+                                                <%= relatedProduct.name %>
+                                            </a></h3>
+                                        <div class="d-flex">
+                                            <div class="pricing">
+                                                <p class="price">
+                                                    <span>
+                                                        <%= relatedProduct.price.toLocaleString('vi-VN') %>₫
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } %>
+                </div>
+            </div>
+        </section>
+
+        <%- include('../partials/user/footer') %>
+            <%- include('../partials/user/load') %>
+                <%- include('../partials/user/scripts') %>
+
+                    <script>
+                        const productId = '<%= product._id %>';
+                        const maxStock = 100; // Có thể set số lượng tối đa
+
+                        // Tăng số lượng
+                        function increaseQuantity() {
+                            const quantityInput = document.getElementById('quantity');
+                            let currentValue = parseInt(quantityInput.value);
+                            if (currentValue < maxStock) {
+                                quantityInput.value = currentValue + 1;
+                            }
+                        }
+
+                        // Giảm số lượng
+                        function decreaseQuantity() {
+                            const quantityInput = document.getElementById('quantity');
+                            let currentValue = parseInt(quantityInput.value);
+                            if (currentValue > 1) {
+                                quantityInput.value = currentValue - 1;
+                            }
+                        }
+
+                        // Đổi ảnh chính
+                        function changeMainImage(imageSrc, thumbnail) {
+                            document.getElementById('mainImage').src = imageSrc;
+
+                            // Remove active class từ tất cả thumbnails
+                            document.querySelectorAll('.thumbnail-item img').forEach(img => {
+                                img.classList.remove('active-thumbnail');
+                            });
+
+                            // Thêm active class cho thumbnail được click
+                            thumbnail.classList.add('active-thumbnail');
+                        }
+
+                        // Thêm vào giỏ hàng
+                        function addToCartDetail() {
+                            const quantity = parseInt(document.getElementById('quantity').value);
+
+                            fetch('/cart/add', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    productId: productId,
+                                    quantity: quantity
+                                })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        document.getElementById('cart-count').textContent = data.cartCount;
+                                        showNotification('success', data.message);
+                                    } else {
+                                        showNotification('error', data.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    showNotification('error', 'Có lỗi xảy ra!');
+                                });
+                        }
+
+                        // Thêm vào yêu thích
+                        function addToWishlistDetail() {
+                            fetch('/wishlist/add', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ productId: productId })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        document.getElementById('wishlist-count').textContent = data.wishlistCount;
+                                        showNotification('success', data.message);
+                                    } else {
+                                        showNotification('error', data.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    showNotification('error', 'Có lỗi xảy ra!');
+                                });
+                        }
+
+                        // Hiển thị thông báo
+                        function showNotification(type, message) {
+                            const notification = document.createElement('div');
+                            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} notification-popup`;
+                            notification.innerHTML = `
+                <strong>${type === 'success' ? 'Thành công' : 'Thất bại'}</strong> ${message}
+            `;
+
+                            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                padding: 15px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideInRight 0.3s ease-out;
+            `;
+
+                            document.body.appendChild(notification);
+
+                            setTimeout(() => {
+                                notification.style.animation = 'slideOutRight 0.3s ease-out';
+                                setTimeout(() => notification.remove(), 300);
+                            }, 3000);
+                        }
+                    </script>
+
+                    <style>
+                        .active-thumbnail {
+                            border: 2px solid #82ae46 !important;
+                        }
+
+                        #quantity {
+                            -moz-appearance: textfield;
+                        }
+
+                        #quantity::-webkit-outer-spin-button,
+                        #quantity::-webkit-inner-spin-button {
+                            -webkit-appearance: none;
+                            margin: 0;
+                        }
+
+                        @keyframes slideInRight {
+                            from {
+                                transform: translateX(100%);
+                                opacity: 0;
+                            }
+
+                            to {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+                        }
+
+                        @keyframes slideOutRight {
+                            from {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+
+                            to {
+                                transform: translateX(100%);
+                                opacity: 0;
+                            }
+                        }
+                    </style>
+</body>
+
+</html>

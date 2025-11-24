@@ -9,9 +9,12 @@ exports.getHome = async (req, res) => {
             .populate('category', 'name')
             .sort({ createdAt: -1 })
             .limit(8);
+
+        const categories = await Category.find({ isActive: true }).sort({ name: 1 });
         
         res.render('user/home', {
             products: products,
+            categories: categories,
             title: 'Trang chủ - Hien Bakery Shop',
             session: req.session
         });

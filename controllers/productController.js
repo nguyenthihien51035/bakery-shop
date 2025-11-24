@@ -221,3 +221,200 @@ exports.getProductDetailApi = async (req, res) => {
         });
     }
 };
+
+// Hiển thị chi tiết sản phẩm
+exports.getProductDetail = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        
+        // Lấy thông tin sản phẩm và populate category
+        const product = await Product.findById(productId).populate('category');
+        
+        if (!product) {
+            req.flash('error', 'Không tìm thấy sản phẩm!');
+            return res.redirect('/');
+        }
+
+        // Lấy sản phẩm liên quan (cùng category, khác id, limit 4)
+        const relatedProducts = await Product.find({
+            category: product.category,
+            _id: { $ne: productId },
+            isActive: true
+        }).limit(4);
+
+        const categories = await Category.find({ isActive: true }).sort({ name: 1 });
+        res.render('user/productDetail', {
+            product,
+            categories: categories,
+            relatedProducts,
+            title: product.name,
+            session: req.session
+        });
+    } catch (error) {
+        console.error('Lỗi khi lấy chi tiết sản phẩm:', error);
+        req.flash('error', 'Có lỗi xảy ra khi tải sản phẩm!');
+        res.redirect('/');
+    }
+};
+
+// Lấy danh sách tất cả sản phẩm
+exports.getAllProducts = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 12;
+        const skip = (page - 1) * limit;
+
+        // Lấy filter từ query
+        const categoryId = req.query.category;
+        const sortBy = req.query.sort || 'newest';
+
+        // Build query
+        let query = { isActive: true };
+        if (categoryId) {
+            query.category = categoryId;
+        }
+
+        // Sorting
+        let sortOption = { createdAt: -1 }; // Mặc định: mới nhất
+        switch (sortBy) {
+            case 'price_asc':
+                sortOption = { price: 1 };
+                break;
+            case 'price_desc':
+                sortOption = { price: -1 };
+                break;
+            case 'name_asc':
+                sortOption = { name: 1 };
+                break;
+            case 'name_desc':
+                sortOption = { name: -1 };
+                break;
+        }
+
+        const products = await Product.find(query)
+            .populate('category')
+            .skip(skip)
+            .limit(limit)
+            .sort(sortOption);
+
+        const totalProducts = await Product.countDocuments(query);
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        // Lấy tất cả categories để hiển thị filter
+        const categories = await Category.find({ isActive: true }).sort({ name: 1 });
+
+        res.render('user/products', {
+            products,
+            categories,
+            currentPage: page,
+            totalPages,
+            totalProducts,
+            selectedCategory: categoryId,
+            selectedSort: sortBy,
+            title: 'Sản phẩm',
+            session: req.session
+        });
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách sản phẩm:', error);
+        req.flash('error', 'Có lỗi xảy ra!');
+        res.redirect('/');
+    }
+};
+
+// Tìm kiếm sản phẩm
+exports.searchProducts = async (req, res) => {
+    try {
+        const keyword = req.query.keyword || '';
+        const page = parseInt(req.query.page) || 1;
+        const limit = 12;
+        const skip = (page - 1) * limit;
+
+        const searchQuery = {
+            isActive: true,
+            $or: [
+                { name: { $regex: keyword, $options: 'i' } },
+                { description: { $regex: keyword, $options: 'i' } }
+            ]
+        };
+
+        const products = await Product.find(searchQuery)
+            .populate('category')
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+
+        const totalProducts = await Product.countDocuments(searchQuery);
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        // Lấy categories để hiển thị
+        const categories = await Category.find({ isActive: true }).sort({ name: 1 });
+
+        res.render('user/products', {
+            products,
+            categories,
+            currentPage: page,
+            totalPages,
+            totalProducts,
+            selectedCategory: null,
+            selectedSort: req.query.sort || 'newest',
+            keyword,
+            title: `Tìm kiếm: ${keyword}`,
+            session: req.session
+        });
+    } catch (error) {
+        console.error('Lỗi khi tìm kiếm:', error);
+        req.flash('error', 'Có lỗi xảy ra khi tìm kiếm!');
+        res.redirect('/');
+    }
+};
+
+// Lọc sản phẩm theo category
+exports.getProductsByCategory = async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+        const page = parseInt(req.query.page) || 1;
+        const limit = 12;
+        const skip = (page - 1) * limit;
+
+        // Kiểm tra category có tồn tại không
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            req.flash('error', 'Không tìm thấy danh mục!');
+            return res.redirect('/products');
+        }
+
+        const products = await Product.find({ 
+            category: categoryId,
+            isActive: true
+        })
+            .populate('category')
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+
+        const totalProducts = await Product.countDocuments({ 
+            category: categoryId,
+            isActive: true
+        });
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        // Lấy tất cả categories
+        const categories = await Category.find({ isActive: true }).sort({ name: 1 });
+
+        res.render('user/products', {
+            products,
+            categories,
+            currentPage: page,
+            totalPages,
+            totalProducts,
+            selectedCategory: categoryId,
+            selectedSort: req.query.sort || 'newest',
+            title: `Danh mục: ${category.name}`,
+            session: req.session
+        });
+    } catch (error) {
+        console.error('Lỗi khi lọc theo danh mục:', error);
+        req.flash('error', 'Có lỗi xảy ra!');
+        res.redirect('/products');
+    }
+};
