@@ -84,9 +84,9 @@ const orderSchema = new mongoose.Schema({
   },
   
   // Trạng thái đơn hàng
-  status: {
+  orderStatus: {  
     type: String,
-    enum: ['pending', 'confirmed', 'preparing', 'shipping', 'delivered', 'cancelled'],
+    enum: ['pending', 'confirmed', 'processing', 'shipping', 'delivered', 'cancelled'],  // ← Sửa 'preparing' thành 'processing'
     default: 'pending'
   },
   

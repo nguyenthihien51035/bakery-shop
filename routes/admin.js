@@ -5,6 +5,7 @@ const categoryController = require('../controllers/categoryController');
 const productController = require('../controllers/productController');
 const upload = require('../middleware/upload');
 const userController = require('../controllers/userController');
+const adminOrderController = require('../controllers/adminOrderController');
 
 router.use(isAuthenticated);
 router.use(isAdmin);
@@ -40,11 +41,16 @@ router.post('/products/create', upload.array('images', 10), productController.cr
 router.get('/products/edit/:id', productController.showEditProduct);
 router.post('/products/edit/:id', upload.array('images', 10), productController.updateProduct);
 router.delete('/products/delete/:id', productController.deleteProduct);
-// API Route để lấy chi tiết sản phẩm theo ID
 router.get('/api/products/:id', productController.getProductDetailApi);
 
 router.get('/users', userController.getUsers);
 router.post('/users/update-role', userController.updateUserRole);
 router.post('/users/toggle-status/:id', userController.toggleUserStatus);
 router.delete('/users/delete/:id', userController.deleteUser);
+
+router.get('/orders', adminOrderController.getAllOrders);
+router.get('/orders/:id', adminOrderController.getOrderDetail);
+router.post('/orders/:id/update-status', adminOrderController.updateOrderStatus);
+router.post('/orders/:id/update-payment', adminOrderController.updatePaymentStatus);
+router.delete('/orders/:id', adminOrderController.deleteOrder);
 module.exports = router;
