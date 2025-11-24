@@ -4,6 +4,7 @@ const homeController = require('../controllers/homeController');
 const cartController = require('../controllers/cartController');
 const productController = require('../controllers/productController');
 const checkoutController = require('../controllers/checkoutController');
+const orderController = require('../controllers/orderController');
 
 
 // Trang chủ
@@ -25,4 +26,8 @@ router.get('/products/:id', productController.getProductDetail);
 
 router.get('/checkout', checkoutController.getCheckout);
 router.post('/checkout/process', checkoutController.processOrder);
+
+router.get('/orders', orderController.getUserOrders);
+router.get('/orders/:id', orderController.getOrderDetail);
+router.post('/orders/:id/cancel', orderController.cancelOrder);
 module.exports = router;
