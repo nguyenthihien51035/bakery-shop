@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Hien Bakery Shop</title>
+	<%- include('../partials/user/head') %>
+</head>
+
+<body class="goto-here">
+	<%- include('../partials/user/header') %>
+
+		<div class="hero-wrap hero-bread" style="background-image: url('images/banner_img3.jpg');">
+			<div class="container">
+				<div class="row no-gutters slider-text align-items-center justify-content-center">
+					<div class="col-md-9 ftco-animate text-center">
+						<p class="breadcrumbs"><span class="mr-2 font-weight-bold"><a href="/">Trang chủ /</a></span>
+							<span class="font-weight-bold">Giỏ hàng</span>
+						</p>
+						<h1 class="mb-0 bread">Giỏ hàng của tôi</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<section class="ftco-section ftco-cart">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12 ftco-animate">
+						<div class="cart-list">
+							<table class="table">
+								<thead class="thead-primary">
+									<tr class="text-center">
+										<th>&nbsp;</th>
+										<th>Hình ảnh</th>
+										<th>Tên sản phẩm</th>
+										<th>Giá</th>
+										<th>Số lượng</th>
+										<th>Tổng</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% if (cartItems && cartItems.length> 0) { %>
+										<% cartItems.forEach(item=> { %>
+											<tr class="text-center">
+												<td class="product-remove">
+													<a href="javascript:void(0);"
+														onclick="removeFromCart('<%= item.productId %>')">
+														<span class="ion-ios-close"></span>
+													</a>
+												</td>
+
+												<td class="image-prod">
+													<% let imageUrl='/images/no-image.jpg' ; if (item.images &&
+														item.images.length> 0) {
+														imageUrl = '/uploads/products/' + item.images[0];
+														}
+														%>
+														<div class="img"
+															style="background-image:url('<%= imageUrl %>');">
+														</div>
+												</td>
+
+												<td class="product-name">
+													<h3>
+														<%= item.name %>
+													</h3>
+													<p>
+														<%= item.description ? item.description.substring(0, 80) + '...'
+															: '' %>
+													</p>
+												</td>
+
+												<td class="price">
+													<%= item.price.toLocaleString('vi-VN') %>₫
+												</td>
+
+												<td class="quantity">
+													<div class="input-group mb-3">
+														<input type="number" class="quantity form-control input-number"
+															value="<%= item.quantity %>" min="1" max="100"
+															onchange="updateQuantity('<%= item.productId %>', this.value)">
+													</div>
+												</td>
+
+												<td class="total">
+													<%= item.total.toLocaleString('vi-VN') %>₫
+												</td>
+											</tr>
+											<% }) %>
+												<% } else { %>
+													<tr>
+														<td colspan="6" class="text-center py-5">
+															<img src="/images/empty-cart.png" alt="Empty"
+																style="max-width: 200px; opacity: 0.5;">
+															<h4 class="mt-3">Giỏ hàng trống</h4>
+															<p class="text-muted">Bạn chưa có sản phẩm nào trong giỏ
+																hàng</p>
+															<a href="/" class="btn btn-primary mt-3">Tiếp tục mua
+																sắm</a>
+														</td>
+													</tr>
+													<% } %>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="row justify-content-center">
+					<div class="col-lg-12 mt-5 cart-wrap ftco-animate">
+						<div class="cart-total mb-3">
+							<h3>Tổng giỏ hàng</h3>
+							<p class="d-flex">
+								<span>Tạm tính</span>
+								<span>
+									<%= subtotal.toLocaleString('vi-VN') %>₫
+								</span>
+							</p>
+							<p class="d-flex">
+								<span>Phí vận chuyển</span>
+								<span>
+									<%= shipping.toLocaleString('vi-VN') %>₫
+								</span>
+							</p>
+							<p class="d-flex">
+								<span>Giảm giá</span>
+								<span>
+									<%= discount.toLocaleString('vi-VN') %>₫
+								</span>
+							</p>
+							<hr>
+							<p class="d-flex total-price">
+								<span>Tổng cộng</span>
+								<span>
+									<%= total.toLocaleString('vi-VN') %>₫
+								</span>
+							</p>
+						</div>
+						<% if (cartItems && cartItems.length> 0) { %>
+							<p><a href="/checkout" class="btn btn-primary py-3 px-4">Thanh toán</a></p>
+							<% } else { %>
+								<p><a href="/" class="btn btn-secondary py-3 px-4">Tiếp tục mua sắm</a></p>
+								<% } %>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<%- include('../partials/user/load') %>
+			<%- include('../partials/user/scripts') %>
+				<script>
+					// Xóa sản phẩm khỏi giỏ hàng
+					function removeFromCart(productId) {
+						if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+							return;
+						}
+
+						fetch('/cart/remove', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify({ productId: productId })
+						})
+							.then(response => response.json())
+							.then(data => {
+								if (data.success) {
+									document.getElementById('cart-count').textContent = data.cartCount;
+									location.reload();
+								} else {
+									alert(data.message);
+								}
+							})
+							.catch(error => {
+								console.error('Error:', error);
+								alert('Có lỗi xảy ra!');
+							});
+					}
+
+					// Cập nhật số lượng
+					function updateQuantity(productId, quantity) {
+						if (quantity < 1) {
+							alert('Số lượng phải lớn hơn 0!');
+							location.reload();
+							return;
+						}
+
+						fetch('/cart/update-quantity', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify({
+								productId: productId,
+								quantity: quantity
+							})
+						})
+							.then(response => response.json())
+							.then(data => {
+								if (data.success) {
+									document.getElementById('cart-count').textContent = data.cartCount;
+									location.reload();
+								} else {
+									alert(data.message);
+								}
+							})
+							.catch(error => {
+								console.error('Error:', error);
+								alert('Có lỗi xảy ra!');
+							});
+					}
+				</script>
+</body>
+
+</html>

@@ -33,6 +33,8 @@ app.use((req, res, next) => {
     res.locals.session = req.session || {};
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
+    res.locals.cartCount = req.session.cartCount || 0;
+    res.locals.wishlistCount = req.session.wishlistCount || 0;
     next();
 });
 
