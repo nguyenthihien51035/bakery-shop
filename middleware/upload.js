@@ -41,4 +41,28 @@ const upload = multer({
     }
 });
 
+// Upload avatar
+const avatarStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const avatarDir = './public/uploads/avatars';
+        if (!fs.existsSync(avatarDir)) {
+            fs.mkdirSync(avatarDir, { recursive: true });
+        }
+        cb(null, avatarDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'avatar-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const uploadAvatar = multer({
+    storage: avatarStorage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 2 * 1024 * 1024 // 2MB
+    }
+});
+
 module.exports = upload;
+module.exports.uploadAvatar = uploadAvatar;

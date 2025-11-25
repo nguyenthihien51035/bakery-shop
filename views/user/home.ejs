@@ -321,15 +321,15 @@
                             padding: 15px 20px;
                             border-radius: 5px;
                             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                            animation: slideInRight 0.3s ease-out;
+                            animation: slideInRight 0.2s ease-out;
                         `;
 
                             document.body.appendChild(notification);
 
-                            // Tự động xóa sau 3 giây
+                            // Tự động xóa sau 1 giây
                             setTimeout(() => {
-                                notification.style.animation = 'slideOutRight 0.3s ease-out';
-                                setTimeout(() => notification.remove(), 300);
+                                notification.style.animation = 'slideOutRight 0.2s ease-out';
+                                setTimeout(() => notification.remove(), 200);
                             }, 3000);
                         }
                     </script>

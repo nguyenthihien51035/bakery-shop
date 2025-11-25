@@ -6,6 +6,8 @@ const productController = require('../controllers/productController');
 const upload = require('../middleware/upload');
 const userController = require('../controllers/userController');
 const adminOrderController = require('../controllers/adminOrderController');
+const profileController = require('../controllers/profileController');
+const { uploadAvatar } = require('../middleware/upload');
 
 router.use(isAuthenticated);
 router.use(isAdmin);
@@ -53,4 +55,8 @@ router.get('/orders/:id', adminOrderController.getOrderDetail);
 router.post('/orders/:id/update-status', adminOrderController.updateOrderStatus);
 router.post('/orders/:id/update-payment', adminOrderController.updatePaymentStatus);
 router.delete('/orders/:id', adminOrderController.deleteOrder);
+
+router.get('/profile', profileController.showProfile);
+router.post('/profile/update', uploadAvatar.single('avatar'), profileController.updateProfile);
+router.post('/profile/change-password', profileController.changePassword);
 module.exports = router;

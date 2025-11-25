@@ -34,6 +34,22 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+
+  avatar: {
+    type: String,
+    default: null
+  },
+  
+  phone: {
+    type: String,
+    default: null
+  },
+  
+  address: {
+    type: String,
+    default: null
+  },
+  
   resetPasswordToken: String,
   resetPasswordExpires: Date
   

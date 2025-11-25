@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        <%= title %> - Hien Bakery Shop
+    </title>
+    <%- include('../partials/user/head') %>
+</head>
+
+<body class="goto-here">
+    <%- include('../partials/user/header') %>
+
+        <div class="hero-wrap hero-bread" style="background-image: url('/images/slideshow_6.png');">
+            <div class="container">
+                <div class="row no-gutters slider-text align-items-center justify-content-center">
+                    <div class="col-md-9 ftco-animate text-center">
+                        <p class="breadcrumbs">
+                            <span class="mr-2"><a href="/">Trang chủ</a></span>
+                            <span>Thông tin cá nhân</span>
+                        </p>
+                        <h1 class="mb-0 bread">Thông tin cá nhân</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="ftco-section">
+            <div class="container">
+                <div class="row">
+                    <!-- Sidebar -->
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <div class="avatar-container mb-3">
+                                    <% let avatarUrl=user.avatar ? '/uploads/avatars/' + user.avatar
+                                        : '/images/default-avatar.png' ; %>
+                                        <img id="avatarPreview" src="<%= avatarUrl %>" alt="Avatar"
+                                            class="rounded-circle"
+                                            style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #82ae46;">
+                                </div>
+                                <h5 class="mb-1">
+                                    <%= user.username %>
+                                </h5>
+                                <p class="text-muted mb-3">
+                                    <%= user.email %>
+                                </p>
+
+                                <!-- Upload Avatar Form -->
+                                <form id="avatarForm" enctype="multipart/form-data">
+                                    <input type="file" id="avatarInput" name="avatar" accept="image/*"
+                                        style="display: none;">
+                                    <button type="button" class="btn btn-sm btn-primary"
+                                        onclick="document.getElementById('avatarInput').click()">
+                                        <i class="icon-camera"></i> Đổi avatar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Menu -->
+                        <div class="list-group mt-3">
+                            <a href="#info" class="list-group-item list-group-item-action active" data-toggle="tab">
+                                <i class="icon-user"></i> Thông tin cá nhân
+                            </a>
+                            <a href="#password" class="list-group-item list-group-item-action" data-toggle="tab">
+                                <i class="icon-lock"></i> Đổi mật khẩu
+                            </a>
+                            <a href="/orders" class="list-group-item list-group-item-action">
+                                <i class="icon-shopping-bag"></i> Đơn hàng của tôi
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="col-md-9">
+                        <div class="tab-content">
+                            <!-- Tab Thông tin cá nhân -->
+                            <div class="tab-pane fade show active" id="info">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Thông tin cá nhân</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="profileForm">
+                                            <div class="form-group">
+                                                <label for="username">Tên đăng nhập <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="username" name="username"
+                                                    value="<%= user.username %>" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <input type="email" class="form-control" id="email"
+                                                    value="<%= user.email %>" disabled>
+                                                <small class="form-text text-muted">Email không thể thay đổi</small>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="phone">Số điện thoại</label>
+                                                <input type="tel" class="form-control" id="phone" name="phone"
+                                                    value="<%= user.phone || '' %>" placeholder="0912345678">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="address">Địa chỉ</label>
+                                                <textarea class="form-control" id="address" name="address" rows="3"
+                                                    placeholder="Nhập địa chỉ của bạn"><%= user.address || '' %></textarea>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="icon-save"></i> Lưu thay đổi
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Đổi mật khẩu -->
+                            <div class="tab-pane fade" id="password">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Đổi mật khẩu</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="passwordForm">
+                                            <div class="form-group">
+                                                <label for="currentPassword">Mật khẩu hiện tại <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="password" class="form-control" id="currentPassword"
+                                                    name="currentPassword" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="newPassword">Mật khẩu mới <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="password" class="form-control" id="newPassword"
+                                                    name="newPassword" required minlength="6">
+                                                <small class="form-text text-muted">Tối thiểu 6 ký tự</small>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="confirmPassword">Xác nhận mật khẩu mới <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="password" class="form-control" id="confirmPassword"
+                                                    name="confirmPassword" required>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="icon-lock"></i> Đổi mật khẩu
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <%- include('../partials/user/footer') %>
+            <%- include('../partials/user/load') %>
+                <%- include('../partials/user/scripts') %>
+
+                    <script>
+                        // Upload avatar
+                        document.getElementById('avatarInput').addEventListener('change', async function (e) {
+                            const file = e.target.files[0];
+                            if (!file) return;
+
+                            // Validate file type
+                            if (!file.type.match('image.*')) {
+                                alert('Vui lòng chọn file ảnh!');
+                                return;
+                            }
+
+                            // Validate file size (2MB)
+                            if (file.size > 2 * 1024 * 1024) {
+                                alert('Kích thước ảnh không được vượt quá 2MB!');
+                                return;
+                            }
+
+                            // Preview
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                document.getElementById('avatarPreview').src = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+
+                            // Upload
+                            const formData = new FormData();
+                            formData.append('avatar', file);
+
+                            try {
+                                const response = await fetch('/profile/upload-avatar', {
+                                    method: 'POST',
+                                    body: formData
+                                });
+
+                                const data = await response.json();
+
+                                if (data.success) {
+                                    showNotification('success', data.message);
+                                } else {
+                                    alert(data.message);
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert('Có lỗi xảy ra khi upload avatar!');
+                            }
+                        });
+
+                        // Cập nhật thông tin
+                        document.getElementById('profileForm').addEventListener('submit', async function (e) {
+                            e.preventDefault();
+
+                            const formData = new FormData(this);
+                            const data = Object.fromEntries(formData);
+
+                            try {
+                                const response = await fetch('/profile/update', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(data)
+                                });
+
+                                const result = await response.json();
+
+                                if (result.success) {
+                                    showNotification('success', result.message);
+                                } else {
+                                    alert(result.message);
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert('Có lỗi xảy ra!');
+                            }
+                        });
+
+                        // Đổi mật khẩu
+                        document.getElementById('passwordForm').addEventListener('submit', async function (e) {
+                            e.preventDefault();
+
+                            const formData = new FormData(this);
+                            const data = Object.fromEntries(formData);
+
+                            try {
+                                const response = await fetch('/profile/change-password', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(data)
+                                });
+
+                                const result = await response.json();
+
+                                if (result.success) {
+                                    showNotification('success', result.message);
+                                    this.reset();
+                                } else {
+                                    alert(result.message);
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert('Có lỗi xảy ra!');
+                            }
+                        });
+
+                        // Notification
+                        function showNotification(type, message) {
+                            const notification = document.createElement('div');
+                            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} notification-popup`;
+                            notification.innerHTML = `<strong>${message}</strong>`;
+
+                            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                padding: 15px 20px;
+                border-radius: 5px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideInRight 0.3s ease-out;
+            `;
+
+                            document.body.appendChild(notification);
+
+                            setTimeout(() => {
+                                notification.style.animation = 'slideOutRight 0.3s ease-out';
+                                setTimeout(() => notification.remove(), 300);
+                            }, 3000);
+                        }
+                    </script>
+
+                    <style>
+                        @keyframes slideInRight {
+                            from {
+                                transform: translateX(100%);
+                                opacity: 0;
+                            }
+
+                            to {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+                        }
+
+                        @keyframes slideOutRight {
+                            from {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+
+                            to {
+                                transform: translateX(100%);
+                                opacity: 0;
+                            }
+                        }
+
+                        .list-group-item-action.active {
+                            background-color: #82ae46;
+                            border-color: #82ae46;
+                        }
+
+                        .avatar-container {
+                            position: relative;
+                            display: inline-block;
+                        }
+
+                        .card {
+                            border: 1px solid #ddd;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        }
+                    </style>
+</body>
+
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <%- include('../partials/admin/head') %>
+</head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <%- include('../partials/admin/navbar') %>
+
+                <div class="layout-page">
+                    <%- include('../partials/admin/header') %>
+
+                        <div class="content-wrapper">
+                            <div class="container-xxl flex-grow-1 container-p-y">
+                                <h4 class="fw-bold py-3 mb-4">
+                                    <span class="text-muted fw-light">Cài đặt /</span> Thông tin cá nhân
+                                </h4>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul class="nav nav-pills flex-column flex-md-row mb-3">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" href="javascript:void(0);">
+                                                    <i class="bx bx-user me-1"></i> Thông tin tài khoản
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                                        <!-- Thông tin cá nhân -->
+                                        <div class="card mb-4">
+                                            <h5 class="card-header">Thông tin cá nhân</h5>
+                                            <div class="card-body">
+                                                <form id="formProfile" enctype="multipart/form-data">
+                                                    <!-- Avatar -->
+                                                    <div
+                                                        class="d-flex align-items-start align-items-sm-center gap-4 mb-4">
+                                                        <% let avatarUrl='/assets/img/avatars/avatar-default.jpg' ; if
+                                                            (user.avatar) { avatarUrl='/uploads/avatars/' + user.avatar;
+                                                            } %>
+                                                            <img src="<%= avatarUrl %>" alt="user-avatar"
+                                                                class="d-block rounded" height="100" width="100"
+                                                                id="uploadedAvatar" />
+                                                            <div class="button-wrapper">
+                                                                <label for="upload" class="btn btn-primary me-2 mb-4"
+                                                                    tabindex="0">
+                                                                    <span class="d-none d-sm-block">Tải ảnh mới</span>
+                                                                    <i class="bx bx-upload d-block d-sm-none"></i>
+                                                                    <input type="file" id="upload" name="avatar"
+                                                                        class="account-file-input" hidden
+                                                                        accept="image/png, image/jpeg"
+                                                                        onchange="previewAvatar(event)" />
+                                                                </label>
+                                                                <p class="text-muted mb-0">JPG, PNG. Tối đa 2MB</p>
+                                                            </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="mb-3 col-md-6">
+                                                            <label for="username" class="form-label">Tên đăng
+                                                                nhập</label>
+                                                            <input class="form-control" type="text" id="username"
+                                                                name="username" value="<%= user.username %>" required />
+                                                        </div>
+
+                                                        <div class="mb-3 col-md-6">
+                                                            <label for="email" class="form-label">Email</label>
+                                                            <input class="form-control" type="email" id="email"
+                                                                value="<%= user.email %>" disabled />
+                                                            <small class="text-muted">Email không thể thay đổi</small>
+                                                        </div>
+
+                                                        <div class="mb-3 col-md-6">
+                                                            <label for="phone" class="form-label">Số điện thoại</label>
+                                                            <input type="text" class="form-control" id="phone"
+                                                                name="phone" value="<%= user.phone || '' %>"
+                                                                placeholder="0912345678" />
+                                                        </div>
+
+                                                        <div class="mb-3 col-md-6">
+                                                            <label for="role" class="form-label">Vai trò</label>
+                                                            <input class="form-control" type="text"
+                                                                value="<%= user.role === 'admin' ? 'Quản trị viên' : 'Người dùng' %>"
+                                                                disabled />
+                                                        </div>
+
+                                                        <div class="mb-3 col-md-12">
+                                                            <label for="address" class="form-label">Địa chỉ</label>
+                                                            <textarea class="form-control" id="address" name="address"
+                                                                rows="2"
+                                                                placeholder="Nhập địa chỉ của bạn"><%= user.address || '' %></textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mt-2">
+                                                        <button type="submit" class="btn btn-primary me-2">
+                                                            <i class="bx bx-save"></i> Lưu thay đổi
+                                                        </button>
+                                                        <button type="reset"
+                                                            class="btn btn-outline-secondary">Hủy</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <!-- Đổi mật khẩu -->
+                                        <div class="card">
+                                            <h5 class="card-header">Đổi mật khẩu</h5>
+                                            <div class="card-body">
+                                                <form id="formChangePassword">
+                                                    <div class="row">
+                                                        <div class="mb-3 col-md-6">
+                                                            <label for="currentPassword" class="form-label">Mật khẩu
+                                                                hiện tại</label>
+                                                            <input class="form-control" type="password"
+                                                                id="currentPassword" name="currentPassword" required />
+                                                        </div>
+                                                        <div class="w-100"></div>
+                                                        <div class="mb-3 col-md-6">
+                                                            <label for="newPassword" class="form-label">Mật khẩu
+                                                                mới</label>
+                                                            <input class="form-control" type="password" id="newPassword"
+                                                                name="newPassword" required />
+                                                            <small class="text-muted">Tối thiểu 6 ký tự</small>
+                                                        </div>
+                                                        <div class="mb-3 col-md-6">
+                                                            <label for="confirmPassword" class="form-label">Xác nhận mật
+                                                                khẩu</label>
+                                                            <input class="form-control" type="password"
+                                                                id="confirmPassword" name="confirmPassword" required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-2">
+                                                        <button type="submit" class="btn btn-primary me-2">
+                                                            <i class="bx bx-key"></i> Đổi mật khẩu
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+        </div>
+    </div>
+
+    <%- include('../partials/admin/scripts') %>
+
+        <script>
+            // Preview avatar
+            function previewAvatar(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('ile quá lớn! Tối đa 2MB');
+                        event.target.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('uploadedAvatar').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            // Cập nhật thông tin cá nhân
+            document.getElementById('formProfile').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+
+                try {
+                    const response = await fetch('/admin/profile/update', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert(result.message);
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra!');
+                }
+            });
+
+            // Đổi mật khẩu
+            document.getElementById('formChangePassword').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+
+                try {
+                    const response = await fetch('/admin/profile/change-password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert(result.message);
+                        this.reset();
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra!');
+                }
+            });
+        </script>
+</body>
+
+</html>
